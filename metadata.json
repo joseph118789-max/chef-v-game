@@ -1,0 +1,6 @@
+{
+  "name": "Gourmet Card Collection Restaurant",
+  "description": "An interactive restaurant card collector where dining receipts yield star-tier card packages, feature tearing/drawing animations, stardust shops, and customizable admin rates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
