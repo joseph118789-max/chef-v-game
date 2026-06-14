@@ -12,9 +12,19 @@ export default defineConfig(() => {
       },
     },
     server: {
-      // HMR is disabled in AI Studio via DISABLE_HMR env var.
-      // Do not modifyâfile watching is disabled to prevent flickering during agent edits.
-      hmr: process.env.DISABLE_HMR !== 'true',
+      host: '0.0.0.0',
+      port: 3002,
+      strictPort: true,
+      // Allow access via the nginx-mapped subdomain.
+      allowedHosts: ['chef-v-game.seekn.site'],
+      // Make HMR use the public hostname instead of localhost:3000 behind nginx.
+      hmr:
+        process.env.DISABLE_HMR === 'true'
+          ? false
+          : {
+              clientHost: 'chef-v-game.seekn.site',
+              clientPort: 80,
+            },
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },

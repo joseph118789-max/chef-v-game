@@ -3,6 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// @ts-ignore
+import { useI18n } from './i18n/useI18n.js';
+// @ts-ignore
+import { languageList } from './i18n/index.js';
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   Sparkles,
@@ -34,7 +39,8 @@ import {
   Package,
   Eye,
   Trash2,
-  LockKeyhole
+  LockKeyhole,
+  Users,
 } from "lucide-react";
 import {
   RESTAURANT_CARDS,
@@ -45,6 +51,9 @@ import {
   AdminConfig,
   UserStats
 } from "./cardsData";
+import MembersPanel from "./features/members/index";
+import LanguageSwitcher from "./components/LanguageSwitcher";
+import RestaurantMenu from "./components/RestaurantMenu";
 
 export default function App() {
   // ---- 1. State Initialization (with LocalStorage persistence) ----
@@ -73,7 +82,11 @@ export default function App() {
     return DEFAULT_ADMIN_CONFIG;
   });
 
-  const [currentTab, setCurrentTab] = useState<"home" | "album" | "spin" | "shop" | "admin">("home");
+  const [currentTab, setCurrentTab] = useState<"home" | "menu" | "album" | "spin" | "shop" | "admin">("home");
+
+  // i18n language state
+  const [lang, setLang] = useState<'en' | 'cn' | 'ms'>('en');
+  const { t } = useI18n(lang);
   
   // App Feedback toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "info" | "error" } | null>(null);
@@ -642,24 +655,30 @@ export default function App() {
       {/* -------------------- MAIN NAVIGATION HEADER -------------------- */}
       <header className="bg-[#F24E82] border-b border-[#E03E70] text-white py-4 px-4 md:px-8 flex flex-wrap justify-between items-center shadow-md relative z-10">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/25 border border-white/30 rounded-full flex items-center justify-center p-2 shadow-inner">
-            <span className="text-2xl">🍗</span>
-          </div>
+          <img src="/logo.jpg" alt="Chef V Logo" className="w-10 h-10 rounded-full object-cover border border-white/30 shadow-inner" />
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">Chef V Western Food</h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-[#FED1DF] leading-none mt-1">Restoran Makanan Barat CHEF V · 西餐厅</p>
+            <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
+              {t.header?.title || 'Chef V Western Food'}
+            </h1>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-[#FED1DF] leading-none mt-1">
+              {t.header?.subtitle || 'Restoran Makanan Barat CHEF V · Western Restaurant'}
+            </p>
           </div>
         </div>
 
         {/* Action button floating in top right */}
         <div className="flex items-center gap-3 mt-2 md:mt-0">
-          <button 
-            onClick={() => showToast("Simulated WhatsApp redirect to Chef V PJ Order Line!", "info")}
-            className="bg-[#00D06C] hover:bg-[#00B05C] font-bold text-xs px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-md transition-all text-white cursor-pointer"
+          <LanguageSwitcher lang={lang} onLangChange={setLang} />
+
+          <a
+            href="https://wa.me/601161058122"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-[#00D06C] hover:bg-[#00B05C] font-bold text-xs px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-md transition-all text-white no-underline"
           >
             <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
-            WhatsApp Order
-          </button>
+            {t.header?.whatsappOrder || '📞 WhatsApp Order'}
+          </a>
 
           {user ? (
             <div className="flex items-center gap-2 bg-white/20 px-3.5 py-2 rounded-full border border-white/25 text-xs shadow-inner">
@@ -667,7 +686,7 @@ export default function App() {
                 {user.name.charAt(0).toUpperCase()}
               </div>
               <span className="max-w-[100px] truncate hidden sm:inline text-white font-bold">{user.name}</span>
-              <button 
+              <button
                 onClick={handleSignOut}
                 title="Sign Out"
                 className="hover:text-[#FED1DF] transition-colors cursor-pointer ml-1 text-white/80"
@@ -676,7 +695,7 @@ export default function App() {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               onClick={() => setShowAuthModal(true)}
               className="bg-white hover:bg-pink-50 text-[#F24E82] font-extrabold text-xs px-5 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
             >
@@ -694,6 +713,12 @@ export default function App() {
             className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "home" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             Restaurant Home
+          </button>
+          <button
+            onClick={() => setCurrentTab("menu")}
+            className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "menu" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+          >
+            Menu
           </button>
           <button 
             onClick={() => {
@@ -743,6 +768,13 @@ export default function App() {
           >
             <Sliders className="w-3.5 h-3.5" />
             Admin rates
+          </button>
+          <button 
+            onClick={() => setCurrentTab("members")} 
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "members" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+          >
+            <Users className="w-3.5 h-3.5" />
+            Members
           </button>
         </div>
       </div>
@@ -970,7 +1002,14 @@ export default function App() {
           </div>
         )}
 
-        {/* ================= TAB 2: COLLECTION ALBUM DASHBOARD ================= */}
+        {/* ================= TAB 2: RESTAURANT MENU ================= */}
+        {currentTab === "menu" && (
+          <div className="py-10 px-4 md:px-12 max-w-7xl mx-auto w-full flex-grow flex flex-col">
+            <RestaurantMenu lang={lang} />
+          </div>
+        )}
+
+        {/* ================= TAB 3: COLLECTION ALBUM DASHBOARD ================= */}
         {currentTab === "album" && user && (
           <div className="py-10 px-4 md:px-12 max-w-7xl mx-auto w-full flex-grow flex flex-col">
             
@@ -1404,6 +1443,13 @@ export default function App() {
 
             </div>
           </div>
+        )}
+
+        {/* ================= TAB 6: MEMBERS PANEL ================= */}
+        {currentTab === "members" && (
+          <MembersPanel
+            showToast={(text, type) => setToastMessage({ text, type })}
+          />
         )}
 
         {/* ================= TAB 5: ADMIN RATES PANEL ================= */}
