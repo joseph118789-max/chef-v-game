@@ -50,6 +50,8 @@ export default function LanguageSwitcher({ lang, onLangChange }: LanguageSwitche
               key={l.code}
               onClick={() => {
                 onLangChange(l.code as 'en' | 'cn' | 'ms');
+                // Also dispatch event so useI18n hook's setLang fires (writes localStorage)
+                window.dispatchEvent(new CustomEvent('chefv:setLang', { detail: l.code }));
                 setOpen(false);
               }}
               className={`w-full text-left px-4 py-2.5 text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
