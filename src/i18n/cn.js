@@ -25,10 +25,36 @@ export default {
   },
 
   nav: {
+    home: '餐厅首页',
     menu: '菜单',
+    album: '收藏图鉴',
+    spin: '抽奖',
+    shop: '星尘商店',
+    admin: '管理设置',
+    members: '会员',
     promos: '优惠',
     gallery: '相簿',
     locations: '分店',
+  },
+
+  auth: {
+    signIn: '登录',
+    signInGoogle: '使用 Google 登录加入',
+  },
+
+  home: {
+    gameBadge: '🍽️ 终极美食收藏家游戏上线！',
+    gameDesc: '上传用餐小票 → 转动轮盘抽取卡包 → 收集美食卡片！重复卡自动转化为星尘！',
+    branches: '巴生谷 7 间分店',
+    scrollHint: '慢慢向下滚动到互动美食相簿！',
+  },
+
+  cards: {
+    common: '普通卡',
+    rare: '稀有卡',
+    legendary: '传说卡',
+    ultimate: '终极卡',
+    inspect: '查看美食卡',
   },
 
   menu: {

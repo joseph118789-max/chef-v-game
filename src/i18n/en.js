@@ -25,10 +25,36 @@ export default {
   },
 
   nav: {
+    home: 'Restaurant Home',
     menu: 'Menu',
+    album: 'Collection Board',
+    spin: 'Spin Package',
+    shop: 'Stardust Shop',
+    admin: 'Admin rates',
+    members: 'Members',
     promos: 'Promotions',
     gallery: 'Gallery',
     locations: 'Locations',
+  },
+
+  auth: {
+    signIn: 'Sign In',
+    signInGoogle: 'Sign In with Google to Join',
+  },
+
+  home: {
+    gameBadge: '🍽️ Ultimate Gourmet Collector Game is Live!',
+    gameDesc: 'Upload dining receipts → Spin for booster packs & draw cards → Collect meal cards! Duplicates automatically convert into Stardust!',
+    branches: '7 Branches Across Klang Valley',
+    scrollHint: 'Slowly scrolling down to Interactive Food Gallery!',
+  },
+
+  cards: {
+    common: 'Common Drop Card',
+    rare: 'Rare Drop Card',
+    legendary: 'Legendary Drop Card',
+    ultimate: 'Ultimate Drop Card',
+    inspect: 'Inspect Food Card',
   },
 
   menu: {

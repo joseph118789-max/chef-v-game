@@ -25,10 +25,36 @@ export default {
   },
 
   nav: {
+    home: 'Halaman Utama',
     menu: 'Menu',
+    album: 'Papan Koleksi',
+    spin: 'Pakej Spin',
+    shop: 'Kedai Stardust',
+    admin: 'Kadar Admin',
+    members: 'Ahli',
     promos: 'Promosi',
     gallery: 'Galeri',
     locations: 'Cawangan',
+  },
+
+  auth: {
+    signIn: 'Log Masuk',
+    signInGoogle: 'Log Masuk dengan Google untuk Sertai',
+  },
+
+  home: {
+    gameBadge: '🍽️ Permainan Kolektor Gourmet Ultimate Dilancarkan!',
+    gameDesc: 'Muat naik resit makan → Spin untuk pek booster & tarik kad → Kumpul kad makanan! Pendua ditukar automatik kepada Stardust!',
+    branches: '7 Cawangan di Lembah Klang',
+    scrollHint: 'Tatal perlahan ke Galeri Makanan Interaktif!',
+  },
+
+  cards: {
+    common: 'Kad Jatuh Biasa',
+    rare: 'Kad Jatuh Langka',
+    legendary: 'Kad Jatuh Legenda',
+    ultimate: 'Kad Jatuh Ultimate',
+    inspect: 'Periksa Kad Makanan',
   },
 
   menu: {

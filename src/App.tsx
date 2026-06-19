@@ -699,7 +699,7 @@ export default function App() {
               onClick={() => setShowAuthModal(true)}
               className="bg-white hover:bg-pink-50 text-[#F24E82] font-extrabold text-xs px-5 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
             >
-              Sign In
+              {t.auth?.signIn || 'Sign In'}
             </button>
           )}
         </div>
@@ -712,13 +712,13 @@ export default function App() {
             onClick={() => setCurrentTab("home")} 
             className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "home" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
-            Restaurant Home
+            {t.nav?.home || 'Restaurant Home'}
           </button>
           <button
             onClick={() => setCurrentTab("menu")}
             className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "menu" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
-            Menu
+            {t.nav?.menu || 'Menu'}
           </button>
           <button 
             onClick={() => {
@@ -732,7 +732,7 @@ export default function App() {
             className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "album" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             <Award className="w-3.5 h-3.5" />
-            Collection Board
+            {t.nav?.album || 'Collection Board'}
           </button>
           <button 
             onClick={() => {
@@ -746,7 +746,7 @@ export default function App() {
             className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "spin" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             <Ticket className="w-3.5 h-3.5 animate-pulse" />
-            Spin Package
+            {t.nav?.spin || 'Spin Package'}
           </button>
           <button 
             onClick={() => {
@@ -760,21 +760,21 @@ export default function App() {
             className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "shop" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            Stardust Shop
+            {t.nav?.shop || 'Stardust Shop'}
           </button>
           <button 
             onClick={() => setCurrentTab("admin")} 
             className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "admin" ? "bg-slate-300 text-slate-800 shadow-sm" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             <Sliders className="w-3.5 h-3.5" />
-            Admin rates
+            {t.nav?.admin || 'Admin rates'}
           </button>
           <button 
             onClick={() => setCurrentTab("members")} 
             className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "members" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
           >
             <Users className="w-3.5 h-3.5" />
-            Members
+            {t.nav?.members || 'Members'}
           </button>
         </div>
       </div>
@@ -826,7 +826,7 @@ export default function App() {
               <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/10 rounded-full transform translate-x-16 translate-y-16"></div>
 
               <span className="bg-pink-100/30 backdrop-blur-md text-white border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 inline-flex items-center gap-1.5 shadow-sm transform hover:scale-105 transition-all">
-                📍 7 Branches Across Klang Valley
+                📍 {t.home?.branches || t.hero?.badge || '7 Branches Across Klang Valley'}
               </span>
               
               <h2 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight max-w-3xl text-white">
