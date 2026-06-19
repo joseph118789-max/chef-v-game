@@ -84,8 +84,16 @@ export default function App() {
 
   const [currentTab, setCurrentTab] = useState<"home" | "menu" | "album" | "spin" | "shop" | "admin">("home");
 
-  // i18n language state
-  const [lang, setLang] = useState<'en' | 'cn' | 'ms'>('en');
+  // i18n language state — initialize from localStorage so refreshes stick
+  const [lang, setLangState] = useState<'en' | 'cn' | 'ms'>(() => {
+    if (typeof window === 'undefined') return 'en';
+    const saved = window.localStorage?.getItem('chefv_lang');
+    return saved === 'cn' || saved === 'ms' || saved === 'en' ? saved : 'en';
+  });
+  const setLang = (next: 'en' | 'cn' | 'ms') => {
+    setLangState(next);
+    try { window.localStorage.setItem('chefv_lang', next); } catch {}
+  };
   const { t } = useI18n(lang);
   
   // App Feedback toast
