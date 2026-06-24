@@ -22,6 +22,8 @@ interface VoucherManagementProps {
   branches: Branch[];
   onRedeem: (voucherId: string, branchId: string) => void;
   onBack: () => void;
+  t: any;
+
 }
 
 type StatusFilter = "" | "active" | "redeemed" | "expired";
@@ -32,7 +34,7 @@ export default function VoucherManagement({
   branches,
   onRedeem,
   onBack,
-}: VoucherManagementProps) {
+}, t: VoucherManagementProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
   const [branchFilter, setBranchFilter] = useState("");

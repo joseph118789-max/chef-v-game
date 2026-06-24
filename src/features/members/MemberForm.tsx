@@ -13,6 +13,8 @@ interface MemberFormProps {
   branches: Branch[];
   onSave: (data: MemberFormData) => { success: boolean; error?: string };
   onBack: () => void;
+  t: any;
+
 }
 
 const EMPTY_FORM: MemberFormData = {
@@ -24,7 +26,7 @@ const EMPTY_FORM: MemberFormData = {
   branchId: "",
 };
 
-export default function MemberForm({ member, branches, onSave, onBack }: MemberFormProps) {
+export default function MemberForm({ member, branches, t, onSave, onBack }: MemberFormProps) {
   const [form, setForm] = useState<MemberFormData>(EMPTY_FORM);
   const [errors, setErrors] = useState<Partial<Record<keyof MemberFormData, string>>>({});
   const [nricError, setNricError] = useState<string>();
@@ -258,7 +260,7 @@ export default function MemberForm({ member, branches, onSave, onBack }: MemberF
             className="flex-1 bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs py-3 rounded-xl transition-all inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
           >
             {saving ? (
-              <span className="animate-pulse">Saving...</span>
+              <span className="animate-pulse">{t.members?.form?.saving || "Saving..."}</span>
             ) : (
               <>
                 <Save className="w-4 h-4" />

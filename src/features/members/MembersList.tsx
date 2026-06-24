@@ -20,6 +20,8 @@ interface MembersListProps {
   branches: Branch[];
   vouchers: BirthdayVoucher[];
   onNavigate: (view: "detail" | "form", memberId?: string) => void;
+  t: any;
+
 }
 
 const PAGE_SIZE = 10;
@@ -34,7 +36,7 @@ export default function MembersList({
   branches,
   vouchers,
   onNavigate,
-}: MembersListProps) {
+}, t: MembersListProps) {
   const [query, setQuery] = useState("");
   const [branchId, setBranchId] = useState("");
   const [birthMonth, setBirthMonth] = useState<number | "">("");
@@ -114,7 +116,7 @@ export default function MembersList({
         {paginated.length === 0 ? (
           <div className="py-16 text-center text-slate-400">
             <UserX className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <p className="font-semibold text-sm">No members found</p>
+            <p className="font-semibold text-sm">{t.members?.list?.noResults || "No members found"}</p>
             <p className="text-xs mt-1">Try adjusting your search or filters</p>
           </div>
         ) : (

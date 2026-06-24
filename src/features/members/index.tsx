@@ -30,11 +30,13 @@ import VoucherManagement from "./VoucherManagement";
 
 interface MembersPanelProps {
   showToast: (text: string, type: "success" | "info" | "error") => void;
+  t: any;
+  lang: 'en' | 'cn' | 'ms';
 }
 
 type Tab = "dashboard" | "list" | "vouchers";
 
-export default function MembersPanel({ showToast }: MembersPanelProps) {
+export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) {
   const [view, setView] = useState<MembersView>("dashboard");
   const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>();
   const [tab, setTab] = useState<Tab>("dashboard");
@@ -50,7 +52,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
   useEffect(() => {
     const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
     if (issued > 0) {
-      showToast(`🎂 ${issued} birthday voucher${issued > 1 ? "s" : ""} auto-issued for this month!`, "success");
+      showToast(`🎂 ${issued} ` + (t.toast?.birthdayVouchersIssued || 'birthday voucher(s) auto-issued for this month!'), "success");
       refresh();
     }
   }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -70,7 +72,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
         name, email, phone, nric, dateOfBirth, branchId,
       });
       if (result) {
-        showToast("Member updated successfully!", "success");
+        showToast(t.toast?.memberUpdated || 'Member updated successfully!', "success");
         refresh();
         return { success: true };
       }
@@ -78,7 +80,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
     } else {
       // Create new
       const member = createMember({ name, email, phone, nric, dateOfBirth, branchId, joinDate });
-      showToast(`Member "${name}" added!`, "success");
+      showToast((t.toast?.memberAdded || 'Member "{name}" added!').replace("{name}", name), "success");
       refresh();
       return { success: true };
     }
@@ -92,7 +94,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
   const handleDeleteMember = (memberId: string) => {
     const member = getMemberById(memberId);
     deleteMember(memberId);
-    showToast(`Member "${member?.name ?? "unknown"}" deleted.`, "info");
+    showToast((t.toast?.memberDeleted || 'Member "{name}" deleted.').replace("{name}", member?.name ?? "unknown"), "info");
     setView("list");
     refresh();
   };
@@ -100,7 +102,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
   const handleRedeemVoucher = (voucherId: string, branchId: string) => {
     const result = redeemVoucher(voucherId, branchId);
     if (result) {
-      showToast(`Voucher ${result.voucherCode} redeemed successfully!`, "success");
+      showToast(`${(t.toast?.voucherRedeemed || "Voucher {code} redeemed successfully!").replace("{code}", result.voucherCode)}`, "success");
       refresh();
     }
   };
@@ -108,9 +110,9 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
   const selectedMember = selectedMemberId ? getMemberById(selectedMemberId) : null;
 
   const NAV_TABS: { key: Tab; label: string; icon: React.ReactNode }[] = [
-    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard className="w-4 h-4" /> },
-    { key: "list", label: "Members", icon: <List className="w-4 h-4" /> },
-    { key: "vouchers", label: "Vouchers", icon: <Ticket className="w-4 h-4" /> },
+    { key: "dashboard", label: t.members?.tabs?.dashboard || 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { key: "list", label: t.members?.tabs?.list || 'Members', icon: <List className="w-4 h-4" /> },
+    { key: "vouchers", label: t.members?.tabs?.vouchers || 'Vouchers', icon: <Ticket className="w-4 h-4" /> },
   ];
 
   return (
@@ -119,10 +121,10 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center gap-2">
-            <Users className="w-7 h-7" /> Member Management
+            <Users className="w-7 h-7" /> {t.members?.title || 'Member Management'}
           </h2>
           <p className="text-slate-600 text-sm mt-0.5">
-            NRIC-based member tracking · Birthday vouchers · Multi-branch support
+            {t.members?.sub || 'NRIC-based member tracking · Birthday vouchers · Multi-branch support'}
           </p>
         </div>
         {view === "dashboard" && (
@@ -130,7 +132,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
             onClick={() => handleNavigate("form")}
             className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 shadow-md cursor-pointer"
           >
-            <PlusCircle className="w-4 h-4" /> Add Member
+            <PlusCircle className="w-4 h-4" /> {t.members?.addMember || 'Add Member'}
           </button>
         )}
       </div>
@@ -162,6 +164,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
           members={members}
           vouchers={vouchers}
           branches={branches}
+          t={t}
           onNavigate={handleNavigate}
           onIssueVouchers={checkAndIssueBirthdayVouchers}
         />
@@ -173,6 +176,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
           members={members}
           branches={branches}
           vouchers={vouchers}
+          t={t}
           onNavigate={(v, id) => {
             if (v === "detail") handleNavigate("detail", id);
             if (v === "form") handleNavigate("form", id);
@@ -186,6 +190,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
           vouchers={vouchers}
           members={members}
           branches={branches}
+          t={t}
           onRedeem={handleRedeemVoucher}
           onBack={() => { setView("dashboard"); setTab("dashboard"); }}
         />
@@ -196,6 +201,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
           key={selectedMemberId ?? "new"}
           member={selectedMember}
           branches={branches}
+          t={t}
           onSave={handleSaveMember}
           onBack={() => {
             setView(selectedMemberId ? "detail" : "list");
@@ -209,6 +215,7 @@ export default function MembersPanel({ showToast }: MembersPanelProps) {
           member={selectedMember}
           branch={branches.find((b) => b.id === selectedMember.branchId)}
           vouchers={vouchers.filter((v) => v.memberId === selectedMemberId)}
+          t={t}
           onBack={() => setView("list")}
           onEdit={handleEditMember}
           onDelete={handleDeleteMember}

@@ -103,7 +103,7 @@ export default function MemberDetail({
       {/* Voucher History */}
       <div className="bg-white rounded-3xl border border-[#FAD0D6] shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-pink-100">
-          <h3 className="font-extrabold text-slate-800 text-sm">Birthday Voucher History</h3>
+          <h3 className="font-extrabold text-slate-800 text-sm">{t.members?.detail?.voucherHistory || "Birthday Voucher History"}</h3>
         </div>
 
         {sortedVouchers.length === 0 ? (

@@ -186,7 +186,7 @@ export default function App() {
     } else {
       setUser(newUser);
     }
-    showToast(`Logged in successfully as ${name}! Welcome to Chef V Club.`, "success");
+    showToast((t.toast?.signedIn || `Logged in successfully as ${name}! Welcome to Chef V Club.`).replace(/{name}/g, name), "success");
     setShowAuthModal(false);
     triggerSound("Google Sign-In Chime");
   };
@@ -198,13 +198,13 @@ export default function App() {
     }
     setUser(null);
     setCurrentTab("home");
-    showToast("Signed out from Chef V loyalty system.", "info");
+    showToast(t.toast?.signedOut || "Signed out from Chef V loyalty system.", "info");
   };
 
   // Receipt Simulation Selection
   const applySampleReceipt = (sampleIndex: number) => {
     if (!user) {
-      showToast("Please sign in first to scan receipts!", "error");
+      showToast(t.toast?.signInFirstScan || "Please sign in first to scan receipts!", "error");
       setShowAuthModal(true);
       return;
     }
@@ -220,13 +220,13 @@ export default function App() {
       items: sample.items,
       tier: sample.tier
     });
-    showToast("Sample receipt loaded. Ready to scan!", "info");
+    showToast(t.toast?.sampleLoaded || "Sample receipt loaded. Ready to scan!", "info");
   };
 
   // Custom File Uploader handler
   const handleReceiptImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) {
-      showToast("Please sign in first to upload receipts!", "error");
+      showToast(t.toast?.signInFirstUpload || "Please sign in first to upload receipts!", "error");
       setShowAuthModal(true);
       return;
     }
@@ -255,7 +255,7 @@ export default function App() {
         items: mockItems,
         tier: tier
       });
-      showToast("Receipt uploaded successfully. Press Start Scan!", "success");
+      showToast(t.toast?.receiptUploaded || "Receipt uploaded successfully. Press Start Scan!", "success");
     }
   };
 
@@ -291,7 +291,7 @@ export default function App() {
         setUser(updatedStats);
       }
       
-      showToast(`Verification Successful! Spent: RM ${scanResults.total.toFixed(2)}. Spin Wheel unlocked!`, "success");
+      showToast(`${t.toast?.verifySuccessPrefix || "Verification Successful! Spent: RM"} ${scanResults.total.toFixed(2)}. ${t.toast?.verifySuccessSuffix || "Spin Wheel unlocked!"}`, "success");
     }, 3600);
   };
 
@@ -306,7 +306,7 @@ export default function App() {
   const triggerSpin = () => {
     if (isSpinning) return;
     if (!user || !scanResults) {
-      showToast("Please verify a valid receipt first to unlock a spin!", "error");
+      showToast(t.toast?.signInSpin || "Please verify a valid receipt first to unlock a spin!", "error");
       return;
     }
 
@@ -372,7 +372,7 @@ export default function App() {
         } : null);
       }
 
-      showToast(`Congratulations! You won a ${destinationSector}-Star Cook Booster Package!`, "success");
+      showToast(`${t.toast?.congratsPrefix || "Congratulations! You won a"} ${destinationSector}${t.toast?.congratsSuffix || "-Star Cook Booster Package!"}`, "success");
       
       // Instantly pop the pack opening sequence!
       openPackFromQueue(destinationSector);
@@ -385,12 +385,12 @@ export default function App() {
   // Purchase pack from the Stardust shop
   const purchaseBoosterFromShop = (tier: number, cost: number) => {
     if (!user) {
-      showToast("Please sign in first to make shop purchases!", "error");
+      showToast(t.toast?.signInFirstShop || "Please sign in first to make shop purchases!", "error");
       setShowAuthModal(true);
       return;
     }
     if (user.stardust < cost) {
-      showToast(`Insufficient Stardust! You need ${cost} stardust but only have ${user.stardust}.`, "error");
+      showToast((t.toast?.insufficient || `Insufficient Stardust! You need ${cost} stardust but only have ${user.stardust}.`).replace(/{need}/g, cost).replace(/{have}/g, user.stardust), "error");
       triggerSound("Low Funds Alert");
       return;
     }
@@ -405,7 +405,7 @@ export default function App() {
     });
 
     triggerSound("Cha-Ching! Package Purchased");
-    showToast(`Purchased a ${tier}-Star Pack with ${cost} Stardust!`, "success");
+    showToast(`${t.toast?.purchasedPrefix || "Purchased a"} ${tier}${t.toast?.purchasedMid || "-Star Pack with"} ${cost} ${t.toast?.purchasedSuffix || "Stardust!"}`, "success");
     openPackFromQueue(tier);
   };
 
@@ -428,7 +428,7 @@ export default function App() {
     if (val >= 95 && !isTorn) {
       setIsTorn(true);
       triggerSound("Foil Ripping Noise");
-      showToast("Foil package ripped open! Slowly draw the card inside up.", "info");
+      showToast(t.toast?.foilRippedToast || "Foil package ripped open! Slowly draw the card inside up.", "info");
     }
   };
 
@@ -517,7 +517,7 @@ export default function App() {
       // Guaranteed legendary
       const idx = Math.floor(Math.random() * legendaryCards.length);
       rolledCard = legendaryCards[idx];
-      showToast("🌠 Pity System Activated! Guaranteed high-tier Drop!", "success");
+      showToast(t.toast?.pityActivated || "🌠 Pity System Activated! Guaranteed high-tier Drop!", "success");
     } else {
       // Normal rolled random number
       const roll = Math.random() * 100;
@@ -543,7 +543,7 @@ export default function App() {
       } else {
         rolledCard = rareCards[Math.floor(Math.random() * rareCards.length)]; // backup rare
       }
-      showToast("Note: Ultimate card limit met for this user. Alternative deluxe card pulled!", "info");
+      showToast(t.toast?.ultimateLimited || "Note: Ultimate card limit met for this user. Alternative deluxe card pulled!", "info");
     }
 
     // Determine if user already has this card (to decide duplicate conversion logic)
@@ -620,9 +620,9 @@ export default function App() {
     if (user) {
       const fresh = INITIAL_USER_STATS(user.email, user.name);
       setUser(fresh);
-      showToast("Card Collector progress reset to starter pack state!", "info");
+      showToast(t.toast?.resetDone || "Card Collector progress reset to starter pack state!", "info");
     } else {
-      showToast("You must be signed in first to reset stats.", "error");
+      showToast(t.toast?.resetSignInFirst || "You must be signed in first to reset stats.", "error");
     }
   };
 
@@ -733,7 +733,7 @@ export default function App() {
           <button 
             onClick={() => {
               if (!user) {
-                showToast("Please sign in with Google to access the collector system!", "info");
+                showToast(t.toast?.signInForAlbum || "Please sign in with Google to access the collector system!", "info");
                 setShowAuthModal(true);
                 return;
               }
@@ -747,7 +747,7 @@ export default function App() {
           <button 
             onClick={() => {
               if (!user) {
-                showToast("Please sign in first to verify receipt & spin!", "info");
+                showToast(t.toast?.signInFirstSpin || "Please sign in first to verify receipt & spin!", "info");
                 setShowAuthModal(true);
                 return;
               }
@@ -761,7 +761,7 @@ export default function App() {
           <button 
             onClick={() => {
               if (!user) {
-                showToast("Please sign in to access the Collector Shop!", "info");
+                showToast(t.toast?.signInForShop || "Please sign in to access the Collector Shop!", "info");
                 setShowAuthModal(true);
                 return;
               }
@@ -1295,19 +1295,19 @@ export default function App() {
                   >
                     {/* Sector Text Labels */}
                     <div className="absolute translate-y-[-75px] -rotate-90 text-slate-800 text-xs font-black drop-shadow-md tracking-wider uppercase select-none">
-                      🍗 1-Star Pouch
+                      {t.spin?.sector1 || "🍗 1-Star Pouch"}
                     </div>
                     <div className="absolute translate-y-[55px] translate-x-[55px] rotate-[150deg] text-slate-900 text-xs font-black drop-shadow-md tracking-wider uppercase select-none">
-                      🥩 2-Star Silver
+                      {t.spin?.sector2 || "🥩 2-Star Silver"}
                     </div>
                     <div className="absolute translate-y-[55px] translate-x-[-55px] rotate-[30deg] text-white text-xs font-black drop-shadow-md tracking-wider uppercase select-none">
-                      👑 3-Star Royal
+                      {t.spin?.sector3 || "👑 3-Star Royal"}
                     </div>
                   </div>
 
                   {/* Inner gold center wheel spin cap */}
                   <div className="absolute w-20 h-20 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] rounded-full border-4 border-white z-20 flex items-center justify-center shadow-lg">
-                    <span className="text-white font-black text-xs uppercase animate-pulse select-none">CHEF V</span>
+                    <span className="text-white font-black text-xs uppercase animate-pulse select-none">{t.spin?.centerLabel || 'CHEF V'}</span>
                   </div>
                 </div>
 
@@ -1459,6 +1459,8 @@ export default function App() {
         {currentTab === "members" && (
           <MembersPanel
             showToast={(text, type) => setToastMessage({ text, type })}
+            t={t}
+            lang={lang}
           />
         )}
 
@@ -1738,7 +1740,7 @@ export default function App() {
                   type="button"
                   onClick={() => {
                     setAdminConfig(DEFAULT_ADMIN_CONFIG);
-                    showToast("Admin rates restored to standard dining calibration!", "success");
+                    showToast(t.toast?.restoredToast || "Admin rates restored to standard dining calibration!", "success");
                     triggerSound("Calibrator Chimes Reset");
                   }}
                   className="bg-[#F24E82] hover:bg-[#E03E70] text-white px-6 py-2.5 rounded-full font-bold text-xs cursor-pointer transition-all shadow-sm"
@@ -1757,15 +1759,15 @@ export default function App() {
       <footer className="bg-white text-slate-500 text-xs py-10 px-4 mt-auto border-t border-[#FAD0D6]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
-            <p className="font-extrabold text-[#F24E82] text-sm">Chef V Western Food</p>
+            <p className="font-extrabold text-[#F24E82] text-sm">{t.header?.title || 'Chef V Western Food'}</p>
             <p className="mt-1 font-light opacity-80 text-slate-400">{ui.footer.copyright}</p>
           </div>
           <div className="flex gap-4 opacity-80 text-slate-500">
-            <button onClick={() => showToast("Simulating PJ branch call!", "info")} className="hover:text-[#F24E82] transition-colors">PJ Sect 14</button>
+            <button onClick={() => showToast(t.toast?.branchCallPJ || "Simulating PJ branch call!", "info")} className="hover:text-[#F24E82] transition-colors">PJ Sect 14</button>
             <span>·</span>
-            <button onClick={() => showToast("Simulating Subang SS15 branch call!", "info")} className="hover:text-[#F24E82] transition-colors">Subang SS15</button>
+            <button onClick={() => showToast(t.toast?.branchCallSS15 || "Simulating Subang SS15 branch call!", "info")} className="hover:text-[#F24E82] transition-colors">Subang SS15</button>
             <span>·</span>
-            <button onClick={() => showToast("Simulating Cheras branch call!", "info")} className="hover:text-[#F24E82] transition-colors">Cheras</button>
+            <button onClick={() => showToast(t.toast?.branchCallCheras || "Simulating Cheras branch call!", "info")} className="hover:text-[#F24E82] transition-colors">{t.spin?.centerLabel || "CHEF V"}</button>
             <span>·</span>
             <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[#F24E82] transition-colors">{ui.footer.terms}</button>
           </div>
@@ -1956,7 +1958,7 @@ export default function App() {
                 {/* Visual Empty Pack background */}
                 <div className="absolute top-12 left-6 right-6 bottom-4 bg-slate-950 border-2 border-slate-800 rounded-2xl shadow-inner z-0 flex items-center justify-center p-6 text-center">
                   <span className="text-[11px] text-slate-600 font-medium uppercase tracking-widest">
-                    Envelope Inner
+                    {t.pack?.envelopeInner || "Envelope Inner"}
                   </span>
                 </div>
 
@@ -1983,13 +1985,13 @@ export default function App() {
                   <div className="text-center flex flex-col items-center mt-6">
                     <span className="text-4xl block animate-pulse">✨</span>
                     <strong className="text-slate-100 text-sm font-black uppercase tracking-widest block mt-4 select-none">
-                      Chef V Card Back
+                      {t.pack?.cardBack || "Chef V Card Back"}
                     </strong>
                     <div className="w-10 h-1 bg-orange-500 rounded-full mx-auto mt-2 opacity-50"></div>
                   </div>
 
                   <div className="mb-2 text-center text-[10px] text-slate-500 uppercase tracking-widest select-none">
-                    👇 Drag card UP to pull out! 👇
+                    {t.pack?.dragUp || "👇 Drag card UP to pull out! 👇"}
                   </div>
                 </div>
 
@@ -1998,7 +2000,7 @@ export default function App() {
                   className="absolute bottom-1 z-20 text-[10px] text-orange-400 font-extrabold uppercase tracking-wider animate-bounce"
                   style={{ display: drawOffset > 10 ? "none" : "block" }}
                 >
-                  ▲ SLIDE UP TO PULL MEAL CARD ▲
+                  {t.pack?.slideUpIndicator || "▲ SLIDE UP TO PULL MEAL CARD ▲"}
                 </div>
 
               </div>
@@ -2056,7 +2058,7 @@ export default function App() {
                     </div>
 
                     <div className="bg-slate-900 text-slate-300 border border-orange-500/50 rounded-2xl px-5 py-3 shadow-2xl mt-4 max-w-xs animate-bounce text-xs">
-                      <p className="font-extrabold text-white text-center">🔄 Duplicated Card Discovered!</p>
+                      <p className="font-extrabold text-white text-center">{t.pack?.duplicateTitle || '🔄 Duplicated Card Discovered!'}</p>
                       <p className="text-[11px] text-orange-400 mt-1">
                         Converted automatically into <strong className="text-yellow-300">+{gainedStardust} Stardust</strong>!
                       </p>
@@ -2091,7 +2093,7 @@ export default function App() {
                 onClick={finishBoosterDraw}
                 className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold text-xs py-3.5 rounded-2xl transition-all shadow-md text-center cursor-pointer hover:brightness-110"
               >
-                Done Drawing Cards Check
+                {t.pack?.doneBtn || "Done Drawing Cards Check"}
               </button>
             ) : (
               <button
@@ -2099,7 +2101,7 @@ export default function App() {
                 onClick={finishBoosterDraw}
                 className="w-full bg-slate-900 text-slate-400 hover:text-white font-medium text-xs py-3 rounded-2xl text-center cursor-pointer border border-slate-800 hover:border-slate-700"
               >
-                Skip sequence / Close
+                {t.pack?.skipBtn || "Skip sequence / Close"}
               </button>
             )}
           </div>

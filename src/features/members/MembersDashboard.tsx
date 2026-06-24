@@ -20,6 +20,8 @@ interface MembersDashboardProps {
   branches: Branch[];
   onNavigate: (view: "list" | "form" | "detail" | "vouchers", memberId?: string) => void;
   onIssueVouchers: () => { issued: number; alreadyActive: number };
+  t: any;
+
 }
 
 export default function MembersDashboard({
@@ -28,7 +30,7 @@ export default function MembersDashboard({
   branches,
   onNavigate,
   onIssueVouchers,
-}: MembersDashboardProps) {
+}, t: MembersDashboardProps) {
   const currentMonth = getCurrentMonth();
 
   const membersThisMonth = members.filter((m) => {
@@ -119,7 +121,7 @@ export default function MembersDashboard({
         {/* Recent Members */}
         <div className="bg-white rounded-3xl border border-[#FAD0D6] shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-pink-100 flex justify-between items-center">
-            <h3 className="font-extrabold text-slate-800 text-sm">Recent Members</h3>
+            <h3 className="font-extrabold text-slate-800 text-sm">{t.members?.dashboard?.recentMembers || "Recent Members"}</h3>
             <button
               onClick={() => onNavigate("list")}
               className="text-[#F24E82] hover:text-[#E03E70] text-xs font-semibold flex items-center gap-1 cursor-pointer"
