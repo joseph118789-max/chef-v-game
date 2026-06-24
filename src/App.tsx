@@ -7,6 +7,7 @@
 import { useI18n } from './i18n/useI18n.js';
 // @ts-ignore
 import { languageList } from './i18n/index.js';
+import { uiCopy } from './i18n/uiCopy';
 
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -95,6 +96,7 @@ export default function App() {
     try { window.localStorage.setItem('chefv_lang', next); } catch {}
   };
   const { t } = useI18n(lang);
+  const ui = uiCopy[lang];
   
   // App Feedback toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "info" | "error" } | null>(null);
@@ -793,27 +795,27 @@ export default function App() {
           <div className="flex gap-4 items-center">
             <span className="flex items-center gap-1.5 text-slate-600">
               <User className="w-3.5 h-3.5 text-[#F24E82]" />
-              Collector: <strong className="text-slate-800 font-bold">{user.name}</strong> 
+              {ui.stats.collector}: <strong className="text-slate-800 font-bold">{user.name}</strong>
             </span>
             <span className="hidden sm:inline text-slate-300">|</span>
             <span className="flex items-center gap-1.5 text-slate-600">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-              Total Spent: <strong className="text-emerald-600 font-bold">RM {user.totalSpent.toFixed(2)}</strong>
+              {ui.stats.totalSpent}: <strong className="text-emerald-600 font-bold">RM {user.totalSpent.toFixed(2)}</strong>
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
             {/* Guaranteed High drop tracking */}
             <div className="bg-[#FFF5F6] px-3.5 py-1.5 rounded-full border border-[#FED1DF] flex items-center gap-2 text-[11px] text-slate-700">
-              <span className="text-[#F24E82] font-semibold animate-pulse">🌠 Guaranteed 3-Star Drop Pity:</span>
+              <span className="text-[#F24E82] font-semibold animate-pulse">🌠 {ui.stats.pity}:</span>
               <span className="font-bold text-slate-900">{user.pityCounter} / {adminConfig.pityThreshold}</span>
-              <span className="text-[10px] text-slate-500 font-mono">(Opened: {user.pityCounter})</span>
+              <span className="text-[10px] text-slate-500 font-mono">({ui.stats.opened}: {user.pityCounter})</span>
             </div>
 
             {/* Glowing Stardust balance layout */}
             <div className="bg-gradient-to-r from-pink-50 to-rose-100 px-4 py-1.5 rounded-full border border-pink-200 flex items-center gap-2.5 shadow-md">
               <Coins className="w-4 h-4 text-[#F24E82]" />
-              <span className="text-slate-750 font-bold">Stardust Balance:</span>
+              <span className="text-slate-750 font-bold">{ui.stats.stardust}:</span>
               <span className="font-extrabold text-[#F24E82] text-sm tracking-wider font-mono">{user.stardust} ⭐</span>
             </div>
           </div>
@@ -872,9 +874,9 @@ export default function App() {
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-[#F24E82]">🍽️ Ultimate Gourmet Collector Game is Live!</h3>
+                  <h3 className="font-bold text-lg text-[#F24E82]">{ui.homePromo.title}</h3>
                   <p className="text-xs text-slate-600 max-w-2xl mt-0.5">
-                    Upload dining receipts → Spin for booster packs & draw cards → Collect meal cards! Duplicates automatically convert into Stardust!
+                    {ui.homePromo.desc}
                   </p>
                 </div>
               </div>
@@ -884,14 +886,14 @@ export default function App() {
                     onClick={() => setCurrentTab("album")}
                     className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-6 py-2.5 rounded-full transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-md"
                   >
-                    Go to Collection Dashboard <ChevronRight className="w-4 h-4" />
+                    {ui.homePromo.dashboard} <ChevronRight className="w-4 h-4" />
                   </button>
                 ) : (
                   <button 
                     onClick={() => setShowAuthModal(true)}
                     className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-extrabold text-xs px-6 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
                   >
-                    Sign In with Google to Join
+                    {ui.homePromo.signInJoin}
                   </button>
                 )}
               </div>
@@ -901,9 +903,9 @@ export default function App() {
             <section className="py-12 px-4 md:px-12 max-w-7xl mx-auto w-full">
               <div className="text-center mb-10">
                 <h3 className="text-3xl font-extrabold text-[#F24E82] flex items-center justify-center gap-2">
-                  <ChefHat className="w-7 h-7 text-[#F24E82]" /> Food Gallery
+                  <ChefHat className="w-7 h-7 text-[#F24E82]" /> {ui.gallery.title}
                 </h3>
-                <p className="text-slate-600 text-sm mt-1">Real photos from our restaurant · 真实照片</p>
+                <p className="text-slate-600 text-sm mt-1">{ui.gallery.sub}</p>
                 <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
               </div>
 
@@ -914,17 +916,17 @@ export default function App() {
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/grilled_chicken_chop_cartoon_1780735447825.png" 
-                      alt="Classic Grilled Chicken Chop" 
+                      alt={ui.gallery.cards[0].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                      Common Drop Card #1
+                      {ui.gallery.cards[0].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">Super Meal - RM 9.90</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">Piping-hot chicken thigh grilled till golden, served with curly spaghetti, coleslaw, bun, and signature brown sauce.</p>
+                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[0].title}</h4>
+                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[0].desc}</p>
                     </div>
                     <button 
                       onClick={() => {
@@ -936,7 +938,7 @@ export default function App() {
                       }}
                       className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
-                      Inspect Food Card
+                      {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
                   </div>
                 </div>
@@ -946,17 +948,17 @@ export default function App() {
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/chicken_baked_rice_cartoon_1780735567112.png" 
-                      alt="Grilled Chicken Baked Rice" 
+                      alt={ui.gallery.cards[1].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                      Legendary Drop Card #5
+                      {ui.gallery.cards[1].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">Signature Grilled Chicken (Baked Rice)</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">Juicy grilled chicken strips over rice, covered in a thick bubbly layer of baked mozzarella and parmesan cheese.</p>
+                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[1].title}</h4>
+                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[1].desc}</p>
                     </div>
                     <button 
                       onClick={() => {
@@ -968,7 +970,7 @@ export default function App() {
                       }}
                       className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
-                      Inspect Food Card
+                      {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
                   </div>
                 </div>
@@ -978,17 +980,17 @@ export default function App() {
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/chicken_cheese_gratin_cartoon_1780735583103.png" 
-                      alt="Dual Chicken Cheese Gratin" 
+                      alt={ui.gallery.cards[2].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
                     <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
-                      Ultimate Drop Card #8
+                      {ui.gallery.cards[2].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">Baked Rice &amp; Cheese Gratin Sides</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">Baking pan cheese gratin layered with both crispy chicken cutlet and prime grilled chicken slices over butter herb rice.</p>
+                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[2].title}</h4>
+                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[2].desc}</p>
                     </div>
                     <button 
                       onClick={() => {
@@ -1000,7 +1002,7 @@ export default function App() {
                       }}
                       className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
-                      Inspect Food Card
+                      {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
                   </div>
                 </div>
@@ -1024,9 +1026,9 @@ export default function App() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center gap-2">
-                  🌌 Gourmet Card Board
+                  {ui.album.title}
                 </h2>
-                <p className="text-slate-600 text-sm mt-0.5">Collect specialized Chef V Dishes cards. Collect &amp; unlock real discounts!</p>
+                <p className="text-slate-600 text-sm mt-0.5">{ui.album.sub}</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -1034,13 +1036,13 @@ export default function App() {
                   onClick={() => setCurrentTab("spin")}
                   className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110 font-bold text-xs px-5 py-2.5 rounded-full text-white inline-flex items-center gap-1.5 shadow-md cursor-pointer animate-pulse"
                 >
-                  <Ticket className="w-4 h-4 animate-bounce text-white" /> Scan receipt to spin!
+                  <Ticket className="w-4 h-4 animate-bounce text-white" /> {ui.album.scan}
                 </button>
                 <button 
                   onClick={handleFullReset}
                   className="bg-white hover:bg-slate-50 text-slate-600 font-bold text-xs px-4 py-2.5 rounded-full transition-all inline-flex items-center gap-1.5 border border-slate-200 cursor-pointer shadow-sm"
                 >
-                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" /> Reset Progress
+                  <RefreshCw className="w-3.5 h-3.5 text-slate-400" /> {ui.album.reset}
                 </button>
               </div>
             </div>
@@ -1060,11 +1062,11 @@ export default function App() {
                         ))}
                       </span>
                       <h3 className="font-extrabold text-slate-800 text-lg md:text-xl">
-                        {starLevel === 1 ? "1-Star Common Dishes Pack" : starLevel === 2 ? "2-Star Silver Gourmet Dishes" : "3-Star Royal Legendary Dishes"}
+                        {ui.album.packs[starLevel - 1]}
                       </h3>
                     </div>
                     <span className="text-xs bg-[#FFF5F6] mt-2 sm:mt-0 font-bold px-4 py-2 rounded-full text-[#F24E82] border border-[#FED1DF] self-start sm:self-auto">
-                      Collection progress: {countOfTotalInStars} / 3 cards found
+                      {ui.album.progress(countOfTotalInStars)}
                     </span>
                   </div>
 
@@ -1092,13 +1094,13 @@ export default function App() {
                           {/* Duplicate badge indicator */}
                           {hasCard && (
                             <div className="absolute top-3 left-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white font-extrabold text-xs px-3.5 py-1 rounded-full z-10 shadow border border-white/20 select-none">
-                              Collected x{countCollected}
+                              {ui.album.collected(countCollected)}
                             </div>
                           )}
 
                           {card.isUltimate && (
                             <div className="bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 text-white font-extrabold text-[10px] px-3 py-2 rounded-br-2xl absolute top-0 left-0 z-10 shadow uppercase tracking-wide">
-                              🏆 ULTIMATE KING CARD
+                              {ui.album.ultimate}
                             </div>
                           )}
 
@@ -1112,7 +1114,7 @@ export default function App() {
                             ) : (
                               <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 p-5 text-center">
                                 <Lock className="w-8 h-8 mb-2 opacity-45 text-[#F24E82]" />
-                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">Locked Dish</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{ui.album.locked}</span>
                               </div>
                             )}
                           </div>
@@ -1128,15 +1130,15 @@ export default function App() {
                                 </span>
                               </div>
                               <p className={`text-xs mt-2 line-clamp-3 leading-relaxed ${hasCard ? "text-slate-600" : "text-slate-400"}`}>
-                                {hasCard ? card.description : "Draw and expand booster packs to unlock recipes information and earn rewards."}
+                                {hasCard ? card.description : ui.album.lockedDesc}
                               </p>
                             </div>
 
                             {/* Glow indicators inside unlocked items */}
                             {hasCard && (
                               <div className="border-t border-pink-105 mt-4 pt-3 flex justify-between items-center text-[10px] text-[#F24E82] font-semibold">
-                                <span className="flex items-center gap-1">✨ Level {Math.min(countCollected, 10)} Recipe</span>
-                                <span className="hover:underline text-[#FF8A65] cursor-pointer">View Detailed Recipe &gt;</span>
+                                <span className="flex items-center gap-1">{ui.album.level(Math.min(countCollected, 10))}</span>
+                                <span className="hover:underline text-[#FF8A65] cursor-pointer">{ui.album.details}</span>
                               </div>
                             )}
                           </div>
@@ -1156,9 +1158,9 @@ export default function App() {
             
             <div className="text-center mb-8">
               <h2 className="text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center justify-center gap-2">
-                🥩 Spin for Gourmet Booster Pack
+                {ui.spin.title}
               </h2>
-              <p className="text-slate-600 text-sm mt-1">Upload receipts spent at Chef V Western branch to trigger booster packs draw wheel.</p>
+              <p className="text-slate-600 text-sm mt-1">{ui.spin.sub}</p>
               <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
             </div>
 
@@ -1167,13 +1169,13 @@ export default function App() {
               {/* Receipt Uploader column */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-[#FAD0D6] flex flex-col">
                 <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2 border-b border-pink-100 pb-3">
-                  <Camera className="w-5 h-5 text-[#F24E82]" /> Step 1: Provide Dining Receipt
+                  <Camera className="w-5 h-5 text-[#F24E82]" /> {ui.spin.step1}
                 </h3>
 
                 {/* Quick Simulation Options */}
                 <div className="mb-5 bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
                   <span className="text-xs font-bold text-[#F24E82] block mb-2.5 uppercase tracking-wider">
-                    ⚡ Quick Test Simulation Presets:
+                    {ui.spin.presets}
                   </span>
                   <div className="space-y-2">
                     {SAMPLE_RECEIPTS.map((rec, i) => (
@@ -1217,8 +1219,8 @@ export default function App() {
                       className="hidden" 
                     />
                     <Upload className="w-10 h-10 text-pink-300 mx-auto mb-3" />
-                    <span className="text-sm font-semibold text-slate-800 block">Drag &amp; Drop or Browse image</span>
-                    <span className="text-xs text-slate-400 mt-1 block">Supports JPG, PNG formats</span>
+                    <span className="text-sm font-semibold text-slate-800 block">{ui.spin.upload}</span>
+                    <span className="text-xs text-slate-400 mt-1 block">{ui.spin.formats}</span>
                   </label>
                 </div>
 
@@ -1226,7 +1228,7 @@ export default function App() {
                   <div className="mt-6 bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
                     <div className="flex justify-between items-start mb-3 border-b border-pink-100 pb-2">
                       <div className="truncate pr-2">
-                        <span className="text-xs bg-[#FFF5F6] text-[#F24E82] border border-pink-250 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wide">Ready to Scan</span>
+                        <span className="text-xs bg-[#FFF5F6] text-[#F24E82] border border-pink-250 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wide">{ui.spin.ready}</span>
                         <h4 className="text-sm font-extrabold text-slate-800 truncate mt-1">{uploadedFile.name}</h4>
                       </div>
                       <button onClick={resetReceiptScanner} className="text-[#F24E82] hover:text-red-500 cursor-pointer">
@@ -1251,7 +1253,7 @@ export default function App() {
                           <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-3 rounded-xl text-xs flex gap-2 items-center">
                             <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
                             <div>
-                              <strong className="text-emerald-900">Receipt Verified!</strong> Spent RM {scanResults.total.toFixed(2)} at Chef V. Ready to spin below!
+                              <strong className="text-emerald-900">{ui.spin.verified}</strong> {ui.spin.verifiedText(scanResults.total.toFixed(2))}
                             </div>
                           </div>
                         ) : (
@@ -1260,7 +1262,7 @@ export default function App() {
                             onClick={startReceiptScan}
                             className="w-full bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                           >
-                            <Sparkles className="w-4 h-4" /> Trigger Digital Scanning Verification
+                            <Sparkles className="w-4 h-4" /> {ui.spin.triggerScan}
                           </button>
                         )}
                       </div>
@@ -1272,7 +1274,7 @@ export default function App() {
               {/* Dynamic Spin Wheel Column */}
               <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-[#FAD0D6] flex flex-col items-center">
                 <h3 className="font-bold text-slate-800 text-lg mb-6 self-start flex items-center gap-2 border-b border-pink-100 pb-3 w-full">
-                  <Ticket className="w-5 h-5 text-[#F24E82]" /> Step 2: Spin the Wheel of Cook Booster Packs
+                  <Ticket className="w-5 h-5 text-[#F24E82]" /> {ui.spin.step2}
                 </h3>
 
                 {/* Spin Wheel graphic */}
@@ -1311,7 +1313,7 @@ export default function App() {
 
                 <div className="mt-4 text-center w-full">
                   <span className="text-xs text-slate-500 mb-3 block">
-                    🎁 Pack tier reward is influenced by dining receipt total tier!
+                    {ui.spin.tierHint}
                   </span>
 
                   <button
@@ -1323,7 +1325,7 @@ export default function App() {
                         : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                     }`}
                   >
-                    {isSpinning ? "SPINNING LOOT..." : scanStep === 4 ? "TAP TO SPIN FOR PRIZE PACKET 🚀" : "Verify Dining Receipt First"}
+                    {isSpinning ? ui.spin.spinning : scanStep === 4 ? ui.spin.tap : ui.spin.verifyFirst}
                   </button>
                 </div>
 
@@ -1339,9 +1341,9 @@ export default function App() {
             
             <div className="text-center mb-10">
               <h2 className="text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center justify-center gap-2">
-                🏠 Stardust Booster Shop
+                {ui.shop.title}
               </h2>
-              <p className="text-slate-600 text-sm mt-1">Convert your duplicate stardust balances directly into specific Star Booster packets.</p>
+              <p className="text-slate-600 text-sm mt-1">{ui.shop.sub}</p>
               <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
             </div>
 
@@ -1350,25 +1352,25 @@ export default function App() {
               {/* Product 1: 1-Star foil */}
               <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-pink-100 hover:-translate-y-1 transition-all duration-300">
                 <span className="bg-[#FFF5F6] text-[#F24E82] border border-pink-200 text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
-                  Bronze Tier
+                  {ui.shop.packs[0].tier}
                 </span>
                 
                 {/* Pack visual container */}
                 <div className="w-28 h-36 bg-gradient-to-br from-[#d48c5a] to-[#804825] rounded-xl my-6 flex flex-col items-center justify-center text-white relative shadow-md group-hover:scale-105 transition-transform">
                   <div className="absolute top-1 inset-x-1 border border-white/20 rounded-lg"></div>
                   <Package className="w-10 h-10 mb-2 opacity-90 animate-pulse text-white" />
-                  <span className="text-[11px] font-black uppercase tracking-widest text-[#FFF]">1-STAR DISH</span>
-                  <span className="text-[9px] opacity-80 mt-1">Common Booster</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-[#FFF]">{ui.shop.packs[0].short}</span>
+                  <span className="text-[9px] opacity-80 mt-1">{ui.shop.packs[0].kind}</span>
                 </div>
 
-                <h3 className="font-extrabold text-slate-850 text-lg">1-Star Starter Booster Pack</h3>
+                <h3 className="font-extrabold text-slate-850 text-lg">{ui.shop.packs[0].title}</h3>
                 <p className="text-slate-600 text-xs mt-2 leading-relaxed px-2">
-                  Contains a high likelihood of 1-Star Common recipes. Decent duplicate starter cash!
+                  {ui.shop.packs[0].desc}
                 </p>
 
                 <div className="mt-6 border-t border-pink-100 pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
-                    <span>Drop rate:</span>
+                    <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Common: {adminConfig.rates.pack1.common}% · Rare: {adminConfig.rates.pack1.rare}%</span>
                   </div>
 
@@ -1376,7 +1378,7 @@ export default function App() {
                     onClick={() => purchaseBoosterFromShop(1, 100)}
                     className="w-full bg-[#FFF5F6] hover:bg-[#FED1DF]/40 border border-[#FED1DF] text-[#F24E82] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    Redeem for 100 ⭐ Stardust
+                    {ui.shop.packs[0].redeem}
                   </button>
                 </div>
               </div>
@@ -1384,25 +1386,25 @@ export default function App() {
               {/* Product 2: 2-Star Silver foil */}
               <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-pink-100 hover:-translate-y-1 transition-all duration-300">
                 <span className="bg-[#FFF5F6] text-slate-500 border border-[#FED1DF] text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
-                  Silver Tier
+                  {ui.shop.packs[1].tier}
                 </span>
                 
                 {/* Pack visual container */}
                 <div className="w-28 h-36 bg-gradient-to-br from-[#E2E8F0] to-[#64748B] rounded-xl my-6 flex flex-col items-center justify-center text-white relative shadow-md group-hover:scale-105 transition-transform">
                   <div className="absolute top-1 inset-x-1 border border-white/20 rounded-lg"></div>
                   <Package className="w-10 h-10 mb-2 opacity-90 animate-pulse text-white" />
-                  <span className="text-[11px] font-black uppercase tracking-widest text-[#FFF]">2-STAR DISH</span>
-                  <span className="text-[9px] opacity-80 mt-1">Silver Booster</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest text-[#FFF]">{ui.shop.packs[1].short}</span>
+                  <span className="text-[9px] opacity-80 mt-1">{ui.shop.packs[1].kind}</span>
                 </div>
 
-                <h3 className="font-extrabold text-slate-850 text-lg">2-Star Silver Cook Pack</h3>
+                <h3 className="font-extrabold text-slate-850 text-lg">{ui.shop.packs[1].title}</h3>
                 <p className="text-slate-600 text-xs mt-2 leading-relaxed px-2">
-                  Contains premium 2-Star ingredients and steak cards. High probability of rare rewards.
+                  {ui.shop.packs[1].desc}
                 </p>
 
                 <div className="mt-6 border-t border-pink-100 pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
-                    <span>Drop rate:</span>
+                    <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Rare: {adminConfig.rates.pack2.rare}% · Legendary: {adminConfig.rates.pack2.legendary}%</span>
                   </div>
 
@@ -1410,7 +1412,7 @@ export default function App() {
                     onClick={() => purchaseBoosterFromShop(2, 250)}
                     className="w-full bg-[#FFF5F6] hover:bg-[#FED1DF]/40 border border-[#FED1DF] text-[#F24E82] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    Redeem for 250 ⭐ Stardust
+                    {ui.shop.packs[1].redeem}
                   </button>
                 </div>
               </div>
@@ -1418,25 +1420,25 @@ export default function App() {
               {/* Product 3: 3-Star Royal Gold foil */}
               <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-amber-100 hover:-translate-y-1 transition-all border-amber-300 duration-300">
                 <span className="bg-amber-100/30 text-amber-600 border border-amber-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
-                  Gold Legendary
+                  {ui.shop.packs[2].tier}
                 </span>
                 
                 {/* Pack visual container */}
                 <div className="w-28 h-36 bg-gradient-to-br from-[#FEF08A] to-[#EAB308] rounded-xl my-6 flex flex-col items-center justify-center text-[#713F12] relative shadow-md group-hover:scale-105 transition-transform">
                   <div className="absolute top-1 inset-x-1 border border-[#713F12]/10 rounded-lg"></div>
                   <Package className="w-10 h-10 mb-2 opacity-90 animate-pulse text-[#713F12]" />
-                  <span className="text-[11px] font-black uppercase tracking-widest">3-STAR DISH</span>
-                  <span className="text-[9px] opacity-80 mt-1 font-semibold">Gold Booster</span>
+                  <span className="text-[11px] font-black uppercase tracking-widest">{ui.shop.packs[2].short}</span>
+                  <span className="text-[9px] opacity-80 mt-1 font-semibold">{ui.shop.packs[2].kind}</span>
                 </div>
 
-                <h3 className="font-extrabold text-slate-850 text-lg">3-Star Royal Cook Purity</h3>
+                <h3 className="font-extrabold text-slate-850 text-lg">{ui.shop.packs[2].title}</h3>
                 <p className="text-slate-600 text-xs mt-2 leading-relaxed px-2">
-                  Extreme chance of pulling the Tomahawk and Ultimate Combo. Heavily boosted odds!
+                  {ui.shop.packs[2].desc}
                 </p>
 
                 <div className="mt-6 border-t border-pink-100 pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
-                    <span>Drop rate:</span>
+                    <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Legendary: {adminConfig.rates.pack3.legendary}% · 3-Star Guaranteed</span>
                   </div>
 
@@ -1444,7 +1446,7 @@ export default function App() {
                     onClick={() => purchaseBoosterFromShop(3, 500)}
                     className="w-full bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white hover:brightness-110 font-extrabold text-xs py-3 rounded-xl shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
-                    Redeem for 500 ⭐ Stardust
+                    {ui.shop.packs[2].redeem}
                   </button>
                 </div>
               </div>
@@ -1467,14 +1469,14 @@ export default function App() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
                 <h2 className="text-2xl md:text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center gap-2">
-                  ⚙️ Admin Collection controller
+                  {ui.admin.title}
                 </h2>
-                <p className="text-slate-600 text-sm mt-0.5">Maintain probabilities, spent thresholds and user limits.</p>
+                <p className="text-slate-600 text-sm mt-0.5">{ui.admin.sub}</p>
               </div>
 
               <div className="bg-white rounded-full px-4 py-1.5 flex items-center gap-2 text-xs text-slate-500 border border-pink-200 shadow-xs">
                 <LockKeyhole className="w-3.5 h-3.5 text-[#F24E82]" />
-                <span>Authorized Session Panel</span>
+                <span>{ui.admin.session}</span>
               </div>
             </div>
 
@@ -1483,18 +1485,18 @@ export default function App() {
               {/* Box 1: Drop Rates configuration */}
               <div>
                 <h3 className="font-extrabold text-slate-800 text-base mb-4 flex items-center gap-1 border-b pb-2 border-pink-100">
-                  ⚡ Card Drop Likelihood Rates (%)
+                  {ui.admin.rates}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   
                   {/* Pack 1 */}
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#F24E82] mb-3 block">1-Star Pack rates</h4>
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#F24E82] mb-3 block">{ui.admin.packRates[0]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Common Rate:</span>
+                          <span>{ui.admin.common}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.common}%</span>
                         </div>
                         <input 
@@ -1512,7 +1514,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Rare Rate:</span>
+                          <span>{ui.admin.rare}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.rare}%</span>
                         </div>
                         <input 
@@ -1530,7 +1532,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Legendary Rate:</span>
+                          <span>{ui.admin.legendary}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.legendary}%</span>
                         </div>
                         <input 
@@ -1551,11 +1553,11 @@ export default function App() {
 
                   {/* Pack 2 */}
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#FF8A65] mb-3 block">2-Star Pack rates</h4>
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#FF8A65] mb-3 block">{ui.admin.packRates[1]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Common Rate:</span>
+                          <span>{ui.admin.common}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack2.common}%</span>
                         </div>
                         <input 
@@ -1573,7 +1575,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Rare Rate:</span>
+                          <span>{ui.admin.rare}</span>
                           <span className="font-bold text-slate-800">{adminConfig.rates.pack2.rare}%</span>
                         </div>
                         <input 
@@ -1591,7 +1593,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Legendary Rate:</span>
+                          <span>{ui.admin.legendary}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack2.legendary}%</span>
                         </div>
                         <input 
@@ -1612,11 +1614,11 @@ export default function App() {
 
                   {/* Pack 3 */}
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-amber-600 mb-3 block">3-Star Pack rates</h4>
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-amber-600 mb-3 block">{ui.admin.packRates[2]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Common Rate:</span>
+                          <span>{ui.admin.common}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.common}%</span>
                         </div>
                         <input 
@@ -1634,7 +1636,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Rare Rate:</span>
+                          <span>{ui.admin.rare}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.rare}%</span>
                         </div>
                         <input 
@@ -1652,7 +1654,7 @@ export default function App() {
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
-                          <span>Legendary Rate:</span>
+                          <span>{ui.admin.legendary}</span>
                           <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.legendary}%</span>
                         </div>
                         <input 
@@ -1677,13 +1679,13 @@ export default function App() {
               {/* Box 2: Spent Tier limits & Pity counts */}
               <div>
                 <h3 className="font-extrabold text-slate-800 text-base mb-4 flex items-center gap-1 border-b pb-2 border-pink-100">
-                  ⚙️ Guaranteed Pulls & Spending Tier Configs
+                  {ui.admin.config}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <label className="text-xs font-bold text-slate-750 block mb-2">Guaranteed 3-Star Pity Threshold (packs)</label>
+                    <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.pity}</label>
                     <input 
                       type="number" 
                       value={adminConfig.pityThreshold}
@@ -1693,11 +1695,11 @@ export default function App() {
                       }}
                       className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
                     />
-                    <span className="text-[10px] text-slate-500 block mt-1.5">Triggers high drop when user meets N opened non-legendary count.</span>
+                    <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.pityHelp}</span>
                   </div>
 
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <label className="text-xs font-bold text-slate-750 block mb-2">Spend Tier 2 Min Spent Value (RM)</label>
+                    <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.spend}</label>
                     <input 
                       type="number" 
                       value={adminConfig.receiptTiers.tier2Receipt}
@@ -1710,11 +1712,11 @@ export default function App() {
                       }}
                       className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
                     />
-                    <span className="text-[10px] text-slate-500 block mt-1.5">Receipt minimum threshold to convert onto 2-Star Silver package spinners.</span>
+                    <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.spendHelp}</span>
                   </div>
 
                   <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <label className="text-xs font-bold text-slate-750 block mb-2">Ultimate 3-Star Monthly Limit (Local User)</label>
+                    <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.monthly}</label>
                     <input 
                       type="number" 
                       value={adminConfig.ultimateMonthlyLimit}
@@ -1724,7 +1726,7 @@ export default function App() {
                       }}
                       className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
                     />
-                    <span className="text-[10px] text-slate-500 block mt-1.5">Strict monthly maximum limit matching limits specified inside layout.</span>
+                    <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.monthlyHelp}</span>
                   </div>
 
                 </div>
@@ -1741,7 +1743,7 @@ export default function App() {
                   }}
                   className="bg-[#F24E82] hover:bg-[#E03E70] text-white px-6 py-2.5 rounded-full font-bold text-xs cursor-pointer transition-all shadow-sm"
                 >
-                  Restore System Default Rates
+                  {ui.admin.restore}
                 </button>
               </div>
 
@@ -1756,7 +1758,7 @@ export default function App() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
             <p className="font-extrabold text-[#F24E82] text-sm">Chef V Western Food</p>
-            <p className="mt-1 font-light opacity-80 text-slate-400">© 2026 Restoran Makanan Barat CHEF V. All Rights Reserved.</p>
+            <p className="mt-1 font-light opacity-80 text-slate-400">{ui.footer.copyright}</p>
           </div>
           <div className="flex gap-4 opacity-80 text-slate-500">
             <button onClick={() => showToast("Simulating PJ branch call!", "info")} className="hover:text-[#F24E82] transition-colors">PJ Sect 14</button>
@@ -1765,7 +1767,7 @@ export default function App() {
             <span>·</span>
             <button onClick={() => showToast("Simulating Cheras branch call!", "info")} className="hover:text-[#F24E82] transition-colors">Cheras</button>
             <span>·</span>
-            <button onClick={() => showToast("Chef V Terms of Use", "info")} className="hover:text-[#F24E82] transition-colors">Terms of Use</button>
+            <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[#F24E82] transition-colors">{ui.footer.terms}</button>
           </div>
         </div>
       </footer>
@@ -1798,17 +1800,17 @@ export default function App() {
 
             <div className="p-6">
               <div className="flex justify-between items-center bg-orange-950/40 border border-orange-500/20 px-4 py-2 rounded-2xl text-xs text-orange-400 font-bold mb-4">
-                <span>Meal Price at Restaurant:</span>
+                <span>{ui.modal.mealPrice}</span>
                 <span>{selectedInspectCard.value}</span>
               </div>
 
-              <h4 className="font-bold text-slate-300 text-xs uppercase tracking-wider mb-2">Description &amp; Chef Notes:</h4>
+              <h4 className="font-bold text-slate-300 text-xs uppercase tracking-wider mb-2">{ui.modal.notes}</h4>
               <p className="text-slate-400 text-xs leading-relaxed">
                 {selectedInspectCard.description}
               </p>
 
               <div className="bg-slate-955 p-3.5 rounded-2xl border border-slate-800/60 mt-5 text-[11px] text-slate-400 leading-normal">
-                💡 <strong className="text-slate-200">Collector reward tier:</strong> Duplicate pulls of this tier inside booster cards yield <strong className="text-orange-400">{selectedInspectCard.stars === 1 ? "+20" : selectedInspectCard.stars === 2 ? "+50" : "+150"} stardust currency</strong>. Save stardust to redeem custom high-quality gold booster packages!
+                💡 <strong className="text-slate-200">{ui.modal.reward}</strong> {ui.modal.rewardText} <strong className="text-orange-400">{selectedInspectCard.stars === 1 ? "+20" : selectedInspectCard.stars === 2 ? "+50" : "+150"} {ui.modal.rewardTail}</strong>
               </div>
 
               <button
@@ -1816,7 +1818,7 @@ export default function App() {
                 onClick={() => setSelectedInspectCard(null)}
                 className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:brightness-110 text-white font-extrabold text-xs py-3.5 rounded-2xl mt-5 transition-all cursor-pointer"
               >
-                Close recipe inspection
+                {ui.modal.close}
               </button>
             </div>
 
@@ -1838,8 +1840,8 @@ export default function App() {
 
             <div className="text-center mb-6">
               <span className="text-4xl">🔑</span>
-              <h3 className="font-extrabold text-slate-100 text-xl tracking-tight mt-3">Google Sign-In</h3>
-              <p className="text-slate-400 text-xs mt-1">Access dining cards album, receipt points verification, and stardust currency.</p>
+              <h3 className="font-extrabold text-slate-100 text-xl tracking-tight mt-3">{ui.authModal.title}</h3>
+              <p className="text-slate-400 text-xs mt-1">{ui.authModal.desc}</p>
             </div>
 
             <div className="space-y-3">
@@ -1854,7 +1856,7 @@ export default function App() {
                 </div>
                 <div className="truncate pr-1">
                   <strong className="block text-slate-105 text-xs font-extrabold">kerja1.landbar@gmail.com</strong>
-                  <span className="text-[10px] text-slate-400 select-none">Access VIP Chef V Collector profile</span>
+                  <span className="text-[10px] text-slate-400 select-none">{ui.authModal.vip}</span>
                 </div>
               </button>
 
@@ -1869,13 +1871,13 @@ export default function App() {
                 </div>
                 <div className="truncate pr-1">
                   <strong className="block text-slate-200 text-xs font-extrabold">anonymous@gmail.com</strong>
-                  <span className="text-[10px] text-slate-400 select-none">Quick Guest testing account</span>
+                  <span className="text-[10px] text-slate-400 select-none">{ui.authModal.guest}</span>
                 </div>
               </button>
             </div>
 
             <div className="mt-5 text-[10px] text-slate-500 text-center uppercase tracking-wide">
-              🔒 Secure loyalty processing via mock Google OAuth setup
+              {ui.authModal.secure}
             </div>
 
           </div>
@@ -1890,13 +1892,13 @@ export default function App() {
           
           <div className="text-center mb-6 max-w-sm animate-fade-in">
             <span className="bg-orange-500 text-slate-950 font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-widest block mb-2.5 w-max mx-auto shadow-md">
-              BOOSTER BOOTING LOOT SEQUENCE
+              {ui.packOpen.boot}
             </span>
             <h3 className="text-xl md:text-2xl font-black text-slate-50">
-              Chef V Booster Opener
+              {ui.packOpen.title}
             </h3>
             <p className="text-slate-400 text-xs mt-1">
-              {!isTorn ? "Tear open the sealed envelope bottom to pull out your card" : "Slowly pull up the card inside to reveal your gourmet dish loot!"}
+              {!isTorn ? ui.packOpen.sealed : ui.packOpen.torn}
             </p>
           </div>
 
@@ -1918,7 +1920,7 @@ export default function App() {
                 <div className="flex justify-between items-start border-b border-white/20 pb-3">
                   <div className="flex items-center gap-1">
                     <span className="text-lg">🍗</span>
-                    <strong className="text-xs uppercase tracking-widest font-black">Chef V Special</strong>
+                    <strong className="text-xs uppercase tracking-widest font-black">{ui.packOpen.special}</strong>
                   </div>
                   <span className="text-[10px] bg-white/20 px-2 py-0.5 rounded-full uppercase font-bold">
                     {activeOpeningPack.tier}-Star Pack
@@ -1927,15 +1929,15 @@ export default function App() {
 
                 <div className="text-center flex flex-col items-center py-6">
                   <Package className="w-14 h-14 mb-2 animate-bounce text-orange-250 text-orange-200" />
-                  <span className="text-xl font-black uppercase tracking-wider block">Gourmet Feast</span>
-                  <span className="text-[10px] opacity-80 uppercase tracking-widest font-medium mt-1">Booster pack envelope</span>
+                  <span className="text-xl font-black uppercase tracking-wider block">{ui.packOpen.feast}</span>
+                  <span className="text-[10px] opacity-80 uppercase tracking-widest font-medium mt-1">{ui.packOpen.envelope}</span>
                 </div>
 
                 {/* Simulated Tear Slide guide line */}
                 <div className="border-t-2 border-dashed border-white/40 pt-4 flex flex-col gap-2 relative">
                   <div className="flex justify-between items-center text-[10px] font-bold">
-                    <span className="flex items-center gap-1 uppercase"><Scissors className="w-3.5 h-3.5 translate-y-[-1px]" /> Tear Slip line</span>
-                    <span>Slide 100% to open</span>
+                    <span className="flex items-center gap-1 uppercase"><Scissors className="w-3.5 h-3.5 translate-y-[-1px]" /> {ui.packOpen.tear}</span>
+                    <span>{ui.packOpen.slide}</span>
                   </div>
                   <input 
                     type="range" min="0" max="100" 

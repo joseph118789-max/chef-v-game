@@ -12,8 +12,7 @@ import {
   MenuCategory,
 } from '../menuData';
 
-// @ts-ignore
-import { languageList } from '../i18n/index.js';
+import { uiCopy } from '../i18n/uiCopy';
 
 interface RestaurantMenuProps {
   lang: 'en' | 'cn' | 'ms';
@@ -23,12 +22,13 @@ type TabKey = MenuCategory | 'locations';
 
 export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
   const [activeTab, setActiveTab] = useState<TabKey>('mains');
+  const ui = uiCopy[lang];
 
   const tabs: { key: TabKey; label: string }[] = [
-    { key: 'mains',    label: '🍽️ Mains' },
-    { key: 'baked',    label: '🧀 Cheese Baked Rice' },
-    { key: 'drinks',   label: '🥤 Drinks' },
-    { key: 'locations', label: '📍 Locations' },
+    { key: 'mains',    label: lang === 'cn' ? '🍽️ 主食' : lang === 'ms' ? '🍽️ Hidangan Utama' : '🍽️ Mains' },
+    { key: 'baked',    label: lang === 'cn' ? '🧀 芝士焗饭' : lang === 'ms' ? '🧀 Nasi Bakar Keju' : '🧀 Cheese Baked Rice' },
+    { key: 'drinks',   label: lang === 'cn' ? '🥤 饮料' : lang === 'ms' ? '🥤 Minuman' : '🥤 Drinks' },
+    { key: 'locations', label: lang === 'cn' ? '📍 分店' : lang === 'ms' ? '📍 Lokasi' : '📍 Locations' },
   ];
 
   const getItems = () => {
@@ -148,14 +148,14 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
       {activeTab !== 'locations' && (
         <div>
           <h3 className="text-xl font-extrabold text-[#F24E82] mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5" /> Food Gallery
+            <MapPin className="w-5 h-5" /> {ui.gallery.title}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {GALLERY_IMAGES.slice(0, 8).map((src, i) => (
               <div key={i} className="aspect-square rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-[#FAD0D6]">
                 <img
                   src={src}
-                  alt={`Gallery ${i + 1}`}
+                  alt={`${ui.gallery.title} ${i + 1}`}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 />
               </div>
