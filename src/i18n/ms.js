@@ -47,6 +47,7 @@ export default {
     gameDesc: 'Muat naik resit makan → Spin untuk pek booster & tarik kad → Kumpul kad makanan! Pendua ditukar automatik kepada Stardust!',
     branches: '7 Cawangan di Lembah Klang',
     scrollHint: 'Tatal perlahan ke Galeri Makanan Interaktif!',
+    branchesToast: 'Cari kami di PJ Seksyen 14, SS15 Subang, Cheras, Kepong, Puchong, Klang & Shah Alam!',
   },
 
   cards: {

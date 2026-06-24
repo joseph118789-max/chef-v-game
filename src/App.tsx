@@ -838,11 +838,11 @@ export default function App() {
               </span>
               
               <h2 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight max-w-3xl text-white">
-                Affordable Western Food <br />Starting from RM 9.90!
+                {t.hero?.title1 || 'Affordable Western Food'} <br />{t.hero?.title2 || 'Starting from RM 9.90!'}
               </h2>
               
               <p className="mt-4 text-sm md:text-base text-white/95 max-w-xl font-medium">
-                Freshly cooked with quality spices · Dine-in or Takeaway
+                {t.hero?.description || 'Freshly cooked with quality spices · Dine-in or Takeaway'}
               </p>
 
               <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -850,17 +850,17 @@ export default function App() {
                   onClick={() => {
                     const el = document.getElementById("recipe-gallery");
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    showToast("Slowing scrolling down to Interactive Food Gallery!", "info");
+                    showToast(t.home?.scrollHint || "Slowing scrolling down to Interactive Food Gallery!", "info");
                   }}
                   className="bg-white hover:bg-pink-50 text-[#F24E82] font-bold px-8 py-3.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
                 >
-                  View Menu
+                  {t.hero?.viewMenu || 'View Menu'}
                 </button>
                 <button 
-                  onClick={() => showToast("PJ Section 14, SS15 Subang, Cheras, Kepong, Puchong, Klang & Shah Alam branches found!", "success")}
+                  onClick={() => showToast(t.home?.branchesToast || "PJ Section 14, SS15 Subang, Cheras, Kepong, Puchong, Klang & Shah Alam branches found!", "success")}
                   className="border border-white text-white hover:bg-white/10 font-bold px-8 py-3.5 rounded-full shadow-sm transition-transform hover:-translate-y-0.5 cursor-pointer"
                 >
-                  Find Us
+                  {t.hero?.findUs || 'Find Us'}
                 </button>
               </div>
             </section>

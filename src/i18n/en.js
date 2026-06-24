@@ -47,6 +47,7 @@ export default {
     gameDesc: 'Upload dining receipts → Spin for booster packs & draw cards → Collect meal cards! Duplicates automatically convert into Stardust!',
     branches: '7 Branches Across Klang Valley',
     scrollHint: 'Slowly scrolling down to Interactive Food Gallery!',
+    branchesToast: 'Find us at PJ Section 14, SS15 Subang, Cheras, Kepong, Puchong, Klang & Shah Alam!',
   },
 
   cards: {

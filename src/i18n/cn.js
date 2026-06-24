@@ -47,6 +47,7 @@ export default {
     gameDesc: '上传用餐小票 → 转动轮盘抽取卡包 → 收集美食卡片！重复卡自动转化为星尘！',
     branches: '巴生谷 7 间分店',
     scrollHint: '慢慢向下滚动到互动美食相簿！',
+    branchesToast: '我们在 PJ 14 区、SS15 梳邦、蕉赖、甲洞、蒲种、巴生 & 莎阿南！',
   },
 
   cards: {
