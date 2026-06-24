@@ -24,12 +24,12 @@ export default {
 
   // ============ HERO ============
   hero: {
-    badge: '🍽️ 7 Branches Across Klang Valley',
-    title1: 'Affordable Western Food',
-    title2: 'Starting from RM 9.90!',
-    description: 'Freshly cooked with premium spices · Dine-in or Takeaway',
-    viewMenu: 'View Menu',
-    findUs: 'Find Us',
+    badge: '🍽️ 7家分店遍布巴生谷',
+    title1: '平价西餐',
+    title2: '低至 RM 9.90 起!',
+    description: '新鲜烹制·优质香料 · 堂食或外带',
+    viewMenu: '查看菜单',
+    findUs: '寻找我们',
     exploreMenu: '浏览菜单',
     viewLocations: '查看分店',
     orderWA: 'WhatsApp 订购',
@@ -39,16 +39,16 @@ export default {
 
   // ============ NAV ============
   nav: {
-    home: 'Restaurant Home',
-    menu: 'Menu',
-    album: 'Collection Board',
-    spin: 'Spin Package',
-    shop: 'Stardust Shop',
-    admin: 'Admin rates',
-    members: 'Members',
-    promos: 'Promotions',
-    gallery: 'Gallery',
-    locations: 'Locations',
+    home: '餐厅主页',
+    menu: '菜单',
+    album: '收藏卡墙',
+    spin: '转盘卡包',
+    shop: '星尘商店',
+    admin: '管理员',
+    members: '会员',
+    promos: '优惠',
+    gallery: '美食图集',
+    locations: '分店位置',
   },
 
   // ============ AUTH ============

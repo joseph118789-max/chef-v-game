@@ -24,12 +24,12 @@ export default {
 
   // ============ HERO ============
   hero: {
-    badge: '🍽️ 7 Branches Across Klang Valley',
-    title1: 'Affordable Western Food',
-    title2: 'Starting from RM 9.90!',
-    description: 'Freshly cooked with premium spices · Dine-in or Takeaway',
-    viewMenu: 'View Menu',
-    findUs: 'Find Us',
+    badge: '🍽️ 7 Cawangan di Lembah Klang',
+    title1: 'Makanan Barat Mampu Milik',
+    title2: 'Bermula dari RM 9.90!',
+    description: 'Dimasak segar dengan rempah premium · Makan di atau Bawa Pulang',
+    viewMenu: 'Lihat Menu',
+    findUs: 'Cari Kami',
     exploreMenu: 'Terokai Menu',
     viewLocations: 'Lihat Lokasi',
     orderWA: 'Pesan via WhatsApp',
@@ -39,16 +39,16 @@ export default {
 
   // ============ NAV ============
   nav: {
-    home: 'Restaurant Home',
+    home: 'Utama Restoran',
     menu: 'Menu',
-    album: 'Collection Board',
-    spin: 'Spin Package',
-    shop: 'Stardust Shop',
-    admin: 'Admin rates',
-    members: 'Members',
-    promos: 'Promotions',
-    gallery: 'Gallery',
-    locations: 'Locations',
+    album: 'Papan Kad',
+    spin: 'Pusing Pek',
+    shop: 'Kedai Stardust',
+    admin: 'Kadar Admin',
+    members: 'Ahli',
+    promos: 'Promosi',
+    gallery: 'Galeri',
+    locations: 'Lokasi',
   },
 
   // ============ AUTH ============
