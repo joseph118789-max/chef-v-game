@@ -20,6 +20,15 @@ const STORAGE_BRANCHES = "chef_v_branches";
 const STORAGE_MEMBERS = "chef_v_members";
 const STORAGE_VOUCHERS = "chef_v_vouchers";
 
+// ---- Seed Members (for demo) ----
+const SEED_MEMBERS: Member[] = [
+  { id: "m1", name: "Liang Test", email: "liang@test.com", phone: "60162222222", nric: "950202056789", dateOfBirth: "02-02-1995", branchId: "b3", joinDate: "2026-01-15", createdAt: "2026-01-15T00:00:00.000Z", updatedAt: "2026-01-15T00:00:00.000Z" },
+  { id: "m2", name: "Ahmad Razif", email: "ahmad@test.com", phone: "60145551234", nric: "890506014861", dateOfBirth: "06-05-1989", branchId: "b1", joinDate: "2026-02-10", createdAt: "2026-02-10T00:00:00.000Z", updatedAt: "2026-02-10T00:00:00.000Z" },
+  { id: "m3", name: "Siti Aminah", email: "siti@test.com", phone: "60136548721", nric: "710318099571", dateOfBirth: "18-03-1971", branchId: "b2", joinDate: "2026-03-05", createdAt: "2026-03-05T00:00:00.000Z", updatedAt: "2026-03-05T00:00:00.000Z" },
+  { id: "m4", name: "Raj Kumar", email: "raj@test.com", phone: "6011171516931", nric: "050801131545", dateOfBirth: "01-08-2005", branchId: "b4", joinDate: "2026-04-20", createdAt: "2026-04-20T00:00:00.000Z", updatedAt: "2026-04-20T00:00:00.000Z" },
+  { id: "m5", name: "Wong Mei Ling", email: "wong@test.com", phone: "601965366679", nric: "720113059083", dateOfBirth: "13-01-1972", branchId: "b5", joinDate: "2026-05-01", createdAt: "2026-05-01T00:00:00.000Z", updatedAt: "2026-05-01T00:00:00.000Z" },
+];
+
 // ---- UUID Generator ----
 export function generateId(): string {
   return "xxxx-xxxx-xxxx".replace(/x/g, () =>
@@ -60,7 +69,9 @@ export function getMembers(): Member[] {
       return [];
     }
   }
-  return [];
+  // First run: seed sample members
+  localStorage.setItem(STORAGE_MEMBERS, JSON.stringify(SEED_MEMBERS));
+  return SEED_MEMBERS;
 }
 
 export function saveMembers(members: Member[]): void {
