@@ -19,6 +19,7 @@ const SEED_BRANCHES: Branch[] = [
 const STORAGE_BRANCHES = "chef_v_branches";
 const STORAGE_MEMBERS = "chef_v_members";
 const STORAGE_VOUCHERS = "chef_v_vouchers";
+const SEED_VERSION = "v2"; // Bump to force re-seed for users on older data
 
 // ---- Seed Members (for demo) ----
 const SEED_MEMBERS: Member[] = [
@@ -43,15 +44,17 @@ export function generateId(): string {
 // ---- Branch CRUD ----
 export function getBranches(): Branch[] {
   const stored = localStorage.getItem(STORAGE_BRANCHES);
-  if (stored) {
+  const seedVersion = localStorage.getItem("chef_v_seed_version");
+  if (stored && seedVersion === SEED_VERSION) {
     try {
       return JSON.parse(stored);
     } catch {
       return SEED_BRANCHES;
     }
   }
-  // First run: seed branches
+  // First run OR outdated seed: seed branches
   localStorage.setItem(STORAGE_BRANCHES, JSON.stringify(SEED_BRANCHES));
+  localStorage.setItem("chef_v_seed_version", SEED_VERSION);
   return SEED_BRANCHES;
 }
 
@@ -66,15 +69,17 @@ export function getBranchById(id: string): Branch | undefined {
 // ---- Member CRUD ----
 export function getMembers(): Member[] {
   const stored = localStorage.getItem(STORAGE_MEMBERS);
-  if (stored) {
+  const seedVersion = localStorage.getItem("chef_v_seed_version");
+  if (stored && seedVersion === SEED_VERSION) {
     try {
       return JSON.parse(stored);
     } catch {
       return [];
     }
   }
-  // First run: seed sample members
+  // First run OR outdated seed: seed sample members
   localStorage.setItem(STORAGE_MEMBERS, JSON.stringify(SEED_MEMBERS));
+  localStorage.setItem("chef_v_seed_version", SEED_VERSION);
   return SEED_MEMBERS;
 }
 
