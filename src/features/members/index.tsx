@@ -85,6 +85,11 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
       });
       if (result) {
         showToast(t.toast?.memberUpdated || 'Member updated successfully!', "success");
+        // Re-check birthday vouchers in case DOB was changed to current month
+        const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
+        if (issued > 0) {
+          showToast(`🎂 ${issued} birthday voucher(s) issued for this month!`, "success");
+        }
         refresh();
         return { success: true };
       }
@@ -93,6 +98,11 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
       // Create new
       const member = createMember({ name, email, phone, nric, dateOfBirth, branchId, joinDate });
       showToast((t.toast?.memberAdded || 'Member "{name}" added!').replace("{name}", name), "success");
+      // Auto-issue birthday voucher if new member's DOB is in current month
+      const { issued } = checkAndIssueBirthdayVouchers();
+      if (issued > 0) {
+        showToast(`🎂 Birthday voucher auto-issued for ${name}!`, "success");
+      }
       refresh();
       return { success: true };
     }
