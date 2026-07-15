@@ -27,6 +27,8 @@ const SEED_MEMBERS: Member[] = [
   { id: "m3", name: "Siti Aminah", email: "siti@test.com", phone: "60136548721", nric: "710318099571", dateOfBirth: "18-03-1971", branchId: "b2", joinDate: "2026-03-05", createdAt: "2026-03-05T00:00:00.000Z", updatedAt: "2026-03-05T00:00:00.000Z" },
   { id: "m4", name: "Raj Kumar", email: "raj@test.com", phone: "6011171516931", nric: "050801131545", dateOfBirth: "01-08-2005", branchId: "b4", joinDate: "2026-04-20", createdAt: "2026-04-20T00:00:00.000Z", updatedAt: "2026-04-20T00:00:00.000Z" },
   { id: "m5", name: "Wong Mei Ling", email: "wong@test.com", phone: "601965366679", nric: "720113059083", dateOfBirth: "13-01-1972", branchId: "b5", joinDate: "2026-05-01", createdAt: "2026-05-01T00:00:00.000Z", updatedAt: "2026-05-01T00:00:00.000Z" },
+  { id: "m6", name: "Tan Bee Hua", email: "tan@test.com", phone: "60133221578", nric: "850720085264", dateOfBirth: "20-07-1985", branchId: "b6", joinDate: "2026-06-12", createdAt: "2026-06-12T00:00:00.000Z", updatedAt: "2026-06-12T00:00:00.000Z" },
+  { id: "m7", name: "Nurul Ain", email: "nurul@test.com", phone: "60147221589", nric: "920707105362", dateOfBirth: "07-07-1992", branchId: "b7", joinDate: "2026-06-25", createdAt: "2026-06-25T00:00:00.000Z", updatedAt: "2026-06-25T00:00:00.000Z" },
 ];
 
 // ---- UUID Generator ----

@@ -302,6 +302,8 @@ export default {
     memberUpdated: '会员更新成功！',
     voucherRedeemed: '礼券 {code} 兑换成功！',
     birthdayVouchersIssued: '本月自动发放的生日礼券',
+    birthdayVouchersAlreadyActive: '本月生日礼券已发放。',
+    noBirthdayVouchers: '本月暂无会员生日。生日礼券将在生日当月自动发放！🎂',
     adminRestored: '管理员掉率已恢复至标准校准！',
   },
 

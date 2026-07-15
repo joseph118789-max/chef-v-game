@@ -57,6 +57,18 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
     }
   }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const handleCheckBirthdayVouchers = () => {
+    const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
+    if (issued > 0) {
+      showToast(`🎂 ${issued} ` + (t.toast?.birthdayVouchersIssued || 'birthday voucher(s) issued for this month!'), "success");
+      refresh();
+    } else if (alreadyActive > 0) {
+      showToast(`✅ ${alreadyActive} ` + (t.toast?.birthdayVouchersAlreadyActive || 'birthday voucher(s) already active for this month.'), "info");
+    } else {
+      showToast((t.toast?.noBirthdayVouchers || 'No members have birthdays this month. Vouchers will be auto-issued when birthdays come up! 🎂'), "info");
+    }
+  };
+
   const handleNavigate = (v: MembersView, memberId?: string) => {
     setView(v);
     setSelectedMemberId(memberId);
@@ -166,7 +178,7 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
           branches={branches}
           t={t}
           onNavigate={handleNavigate}
-          onIssueVouchers={checkAndIssueBirthdayVouchers}
+          onIssueVouchers={handleCheckBirthdayVouchers}
         />
       )}
 

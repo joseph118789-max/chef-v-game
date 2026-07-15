@@ -302,6 +302,8 @@ export default {
     memberUpdated: 'Ahli berjaya dikemas kini!',
     voucherRedeemed: 'Baucar {code} berjaya ditebus!',
     birthdayVouchersIssued: 'baucar hari jadi auto diterbitkan untuk bulan ini',
+    birthdayVouchersAlreadyActive: 'baucar hari jadi sudah aktif untuk bulan ini.',
+    noBirthdayVouchers: 'Tiada ahli yang menyambut hari jadi bulan ini. Baucar akan dikeluarkan secara automatik apabila tiba waktunya! 🎂',
     adminRestored: 'Kadar admin dipulihkan kepada penentukuran standard!',
   },
 

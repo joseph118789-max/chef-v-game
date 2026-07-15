@@ -302,6 +302,8 @@ export default {
     memberUpdated: 'Member updated successfully!',
     voucherRedeemed: 'Voucher {code} redeemed successfully!',
     birthdayVouchersIssued: 'birthday voucher(s) auto-issued for this month!',
+    birthdayVouchersAlreadyActive: 'birthday voucher(s) already active for this month.',
+    noBirthdayVouchers: 'No members have birthdays this month. Vouchers will be auto-issued when birthdays come up! 🎂',
     adminRestored: 'Admin rates restored to standard dining calibration!',
   },
 
