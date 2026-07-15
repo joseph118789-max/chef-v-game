@@ -8,7 +8,7 @@ import { NRICParseResult } from "./types";
 /**
  * Parse Malaysian NRIC and extract date of birth.
  * Format: YYMMDD-PB-XXX or YYMMDDPBXXX (12 chars, no dashes)
- * - YYMMDD = birthdate in DDMMYY format (day first!)
+ * - YYMMDD = birthdate in YYMMDD format (year first!)
  * - PB = place of birth code
  * - XXX = serial number
  */
@@ -26,13 +26,10 @@ export function parseNRIC(nric: string): NRICParseResult {
     return { valid: false, dateOfBirth: null, error: "NRIC must contain only numbers" };
   }
 
-  const dayStr = cleaned.substring(0, 2);
-  const monthStr = cleaned.substring(2, 4);
-  const yearStr = cleaned.substring(4, 6);
-
-  const day = parseInt(dayStr, 10);
-  const month = parseInt(monthStr, 10);
-  const yearShort = parseInt(yearStr, 10);
+  // NRIC format: YYMMDD-PB-XXX
+  const yearShort = parseInt(cleaned.substring(0, 2), 10);
+  const month = parseInt(cleaned.substring(2, 4), 10);
+  const day = parseInt(cleaned.substring(4, 6), 10);
 
   if (month < 1 || month > 12) {
     return { valid: false, dateOfBirth: null, error: `Invalid month in NRIC: ${month}` };
