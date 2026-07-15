@@ -78,6 +78,7 @@ export function getMembers(): Member[] {
     }
   }
   // First run OR outdated seed: seed sample members
+  console.log(`[Members] Re-seeding: stored=${!!stored}, seedVersion=${seedVersion}, expected=${SEED_VERSION}`);
   localStorage.setItem(STORAGE_MEMBERS, JSON.stringify(SEED_MEMBERS));
   localStorage.setItem("chef_v_seed_version", SEED_VERSION);
   return SEED_MEMBERS;
