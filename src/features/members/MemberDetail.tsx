@@ -24,6 +24,7 @@ interface MemberDetailProps {
   onBack: () => void;
   onEdit: (memberId: string) => void;
   onDelete: (memberId: string) => void;
+  t: any;
 }
 
 export default function MemberDetail({
@@ -33,6 +34,7 @@ export default function MemberDetail({
   onBack,
   onEdit,
   onDelete,
+  t,
 }: MemberDetailProps) {
   const [showDelete, setShowDelete] = useState(false);
 
