@@ -149,8 +149,8 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
         )}
       </div>
 
-      {/* Sub-nav tabs (only for main views, not form/detail) */}
-      {view === "dashboard" && (
+      {/* Sub-nav tabs (Dashboard, Members list, Vouchers - not form/detail) */}
+      {(view === "dashboard" || view === "list" || view === "vouchers") && (
         <div className="bg-white rounded-2xl border border-[#FAD0D6] p-1.5 flex gap-1 mb-6 shadow-sm w-max">
           {NAV_TABS.map((t) => (
             <button
