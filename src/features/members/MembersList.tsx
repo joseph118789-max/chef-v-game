@@ -36,7 +36,8 @@ export default function MembersList({
   branches,
   vouchers,
   onNavigate,
-}, t: MembersListProps) {
+  t,
+}: MembersListProps) {
   const [query, setQuery] = useState("");
   const [branchId, setBranchId] = useState("");
   const [birthMonth, setBirthMonth] = useState<number | "">("");

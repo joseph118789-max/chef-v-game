@@ -30,7 +30,8 @@ export default function MembersDashboard({
   branches,
   onNavigate,
   onIssueVouchers,
-}, t: MembersDashboardProps) {
+  t,
+}: MembersDashboardProps) {
   const currentMonth = getCurrentMonth();
 
   const membersThisMonth = members.filter((m) => {

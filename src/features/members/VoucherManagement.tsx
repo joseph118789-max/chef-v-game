@@ -34,7 +34,8 @@ export default function VoucherManagement({
   branches,
   onRedeem,
   onBack,
-}, t: VoucherManagementProps) {
+  t,
+}: VoucherManagementProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("");
   const [branchFilter, setBranchFilter] = useState("");
