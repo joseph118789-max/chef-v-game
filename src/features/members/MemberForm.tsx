@@ -1,7 +1,7 @@
 // ============================================================
 // MemberForm — Add / Edit member
 // ============================================================
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft, Save, UserPlus } from "lucide-react";
 import { Branch, Member, MemberFormData } from "./types";
 import { parseNRIC } from "./utils";
@@ -108,7 +108,9 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
 
   const handleNRICValid = (valid: boolean, dob: string | null) => {
     setNricValid(valid);
-    if (dob) setField("dateOfBirth", dob);
+    if (dob) {
+      setForm((prev) => ({ ...prev, dateOfBirth: dob }));
+    }
     if (!valid) setNricError("Invalid NRIC format");
     else setNricError(undefined);
   };

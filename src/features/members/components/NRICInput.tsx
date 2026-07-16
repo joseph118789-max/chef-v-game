@@ -1,7 +1,7 @@
 // ============================================================
 // NRICInput — NRIC field with live validation + DOB preview
 // ============================================================
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { parseNRIC } from "../utils";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 
@@ -19,6 +19,18 @@ export default function NRICInput({
   error: externalError,
 }: NRICInputProps) {
   const [touched, setTouched] = useState(false);
+  // Track previous value to detect programmatic pre-fill
+  const prevValueRef = useRef("");
+
+  // Validate when value is pre-filled (e.g., on member edit) or user types
+  useEffect(() => {
+    if (prevValueRef.current !== value && value.replace(/[-\s]/g, "").length >= 12 && onValidChange) {
+      const result = parseNRIC(value);
+      onValidChange(result.valid, result.dateOfBirth);
+      setTouched(true);
+    }
+    prevValueRef.current = value;
+  }, [value, onValidChange]);
 
   const internalError = touched ? externalError : undefined;
   const parsed = value.trim().length >= 12 ? parseNRIC(value) : null;
