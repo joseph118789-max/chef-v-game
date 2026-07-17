@@ -46,10 +46,11 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
       });
     } else {
       setForm(EMPTY_FORM);
+      // Only reset NRIC validation for NEW forms, not edit (where NRICInput will validate pre-fill)
+      setNricValid(false);
     }
     setErrors({});
     setNricError(undefined);
-    setNricValid(false);
   }, [member]);
 
   const setField = (field: keyof MemberFormData, value: string) => {
@@ -113,6 +114,13 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
     }
     if (!valid) setNricError("Invalid NRIC format");
     else setNricError(undefined);
+    // Always clear the form-level NRIC error when NRIC validity changes
+    setErrors((prev) => {
+      if (prev.nric) {
+        return { ...prev, nric: undefined };
+      }
+      return prev;
+    });
   };
 
   return (
