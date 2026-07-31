@@ -46,15 +46,15 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
     <div className="flex flex-col gap-6">
 
       {/* Tab Bar */}
-      <div className="bg-white rounded-2xl p-2 shadow-sm border border-[#FAD0D6] flex gap-1 overflow-x-auto">
+      <div className="glass-panel rounded-[24px] p-2 flex gap-1 overflow-x-auto">
         {tabs.map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`px-4 py-2.5 rounded-[16px] text-xs font-extrabold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === tab.key
-                ? 'bg-[#F24E82] text-white shadow-md'
-                : 'text-slate-600 hover:bg-pink-50'
+                ? 'bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-lg'
+                : 'text-[var(--chef-ink-soft)] hover:bg-white/60'
             }`}
           >
             {tab.label}
@@ -68,26 +68,26 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
           {items.map(item => (
             <div
               key={item.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#FAD0D6] hover:shadow-md transition-all group flex flex-col"
+              className="premium-card rounded-[24px] overflow-hidden hover:-translate-y-1 transition-all group flex flex-col"
             >
               <div className="p-4 flex flex-col justify-between flex-grow">
                 <div>
                   <div className="flex justify-between items-start gap-2 mb-2">
-                    <h4 className="font-extrabold text-slate-800 text-sm leading-tight">
+                    <h4 className="font-extrabold text-[var(--chef-brown-deep)] text-sm leading-tight serif-heading">
                       {getDisplayName(item, lang)}
                     </h4>
                     {item.tag && (
-                      <span className="bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                      <span className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-[10px] font-extrabold px-2 py-0.5 rounded-full shrink-0 shadow-sm">
                         {item.tag}
                       </span>
                     )}
                   </div>
-                  <p className="text-slate-500 text-xs leading-relaxed">
+                  <p className="text-[var(--chef-ink-soft)] text-xs leading-relaxed">
                     {getDisplayDesc(item, lang)}
                   </p>
                 </div>
-                <div className="mt-4 pt-3 border-t border-[#FAD0D6] flex justify-between items-center">
-                  <span className="font-black text-[#F24E82] text-lg">
+                <div className="mt-4 pt-3 border-t border-[var(--chef-line)] flex justify-between items-center">
+                  <span className="font-black text-[var(--chef-brown-deep)] text-lg">
                     RM {item.price.toFixed(2)}
                   </span>
                 </div>
@@ -103,7 +103,7 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
           {BRANCHES.map(branch => (
             <div
               key={branch.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[#FAD0D6] hover:shadow-md transition-all"
+              className="premium-card rounded-[24px] overflow-hidden hover:-translate-y-1 transition-all"
             >
               {branch.image && (
                 <div className="aspect-video overflow-hidden bg-slate-100">
@@ -118,22 +118,22 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
                 </div>
               )}
               <div className="p-4">
-                <h4 className="font-extrabold text-slate-800 text-sm mb-1">
+                <h4 className="font-extrabold text-[var(--chef-brown-deep)] text-sm mb-1 serif-heading">
                   {lang === 'ms' ? branch.nameMy : branch.name}
                 </h4>
                 {branch.note && (
-                  <p className="text-xs text-[#F24E82] font-semibold mb-1">
+                  <p className="text-xs text-[var(--chef-gold)] font-bold mb-1">
                     {lang === 'ms' ? branch.noteMy : branch.note}
                   </p>
                 )}
-                <p className="text-slate-500 text-xs leading-relaxed mb-3">{branch.address}</p>
-                <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                  <Phone className="w-3.5 h-3.5 text-[#F24E82]" />
+                <p className="text-[var(--chef-ink-soft)] text-xs leading-relaxed mb-3">{branch.address}</p>
+                <div className="flex items-center gap-1.5 text-xs text-[var(--chef-ink-soft)]">
+                  <Phone className="w-3.5 h-3.5 text-[var(--chef-gold)]" />
                   <a
                     href={`https://wa.me/${branch.phone.replace(/[^0-9]/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="font-bold text-[#F24E82] hover:underline"
+                    className="font-bold text-[var(--chef-brown)] hover:underline"
                   >
                     {branch.phone}
                   </a>
@@ -147,12 +147,12 @@ export default function RestaurantMenu({ lang }: RestaurantMenuProps) {
       {/* Gallery Section */}
       {activeTab !== 'locations' && (
         <div>
-          <h3 className="text-xl font-extrabold text-[#F24E82] mb-4 flex items-center gap-2">
-            <MapPin className="w-5 h-5" /> {ui.gallery.title}
+          <h3 className="text-xl font-extrabold text-[var(--chef-brown-deep)] mb-4 flex items-center gap-2 serif-heading">
+            <MapPin className="w-5 h-5 text-[var(--chef-gold)]" /> {ui.gallery.title}
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {GALLERY_IMAGES.slice(0, 8).map((src, i) => (
-              <div key={i} className="aspect-square rounded-xl overflow-hidden bg-slate-100 shadow-sm border border-[#FAD0D6]">
+              <div key={i} className="aspect-square rounded-[18px] overflow-hidden bg-slate-100 shadow-sm border border-[var(--chef-line)]">
                 <img
                   src={src}
                   alt={`${ui.gallery.title} ${i + 1}`}

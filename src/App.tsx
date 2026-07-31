@@ -630,7 +630,7 @@ export default function App() {
   const dismissSoundBadge = () => setSoundEffect(null);
 
   return (
-    <div className="min-h-screen bg-[#FFF5F6] text-slate-800 font-sans flex flex-col antialiased selection:bg-[#F24E82] selection:text-white">
+    <div className="min-h-screen text-[var(--chef-ink)] font-sans flex flex-col antialiased selection:bg-[var(--chef-gold)] selection:text-[var(--chef-brown-deep)] relative overflow-x-hidden">
       
       {/* Dynamic sound overlay banner (shows vibration/sfx cue inside client SPA beautifully) */}
       {soundEffect && (
@@ -663,14 +663,14 @@ export default function App() {
       )}
 
       {/* -------------------- MAIN NAVIGATION HEADER -------------------- */}
-      <header className="bg-[#F24E82] border-b border-[#E03E70] text-white py-4 px-4 md:px-8 flex flex-wrap justify-between items-center shadow-md relative z-10">
+      <header className="glass-panel text-[var(--chef-brown-deep)] py-5 px-4 md:px-8 flex flex-wrap justify-between items-center relative z-10 rounded-b-[28px] border-t-0 border-x-0">
         <div className="flex items-center gap-3">
-          <img src="/logo.jpg" alt="Chef V Logo" className="w-10 h-10 rounded-full object-cover border border-white/30 shadow-inner" />
+          <img src="/logo_old.jpg" alt="Chef V Logo" className="w-10 h-10 rounded-full object-cover border border-white/30 shadow-inner" />
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-tight text-white">
+            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-[var(--chef-brown-deep)] serif-heading">
               {t.header?.title || 'Chef V Western Food'}
             </h1>
-            <p className="text-[10px] uppercase font-bold tracking-widest text-[#FED1DF] leading-none mt-1">
+            <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-[var(--chef-ink-soft)] leading-none mt-1">
               {t.header?.subtitle || 'Restoran Makanan Barat CHEF V · Western Restaurant'}
             </p>
           </div>
@@ -684,22 +684,22 @@ export default function App() {
             href="https://wa.me/601161058122"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#00D06C] hover:bg-[#00B05C] font-bold text-xs px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-md transition-all text-white no-underline"
+            className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] hover:brightness-105 font-bold text-xs px-4 py-2 rounded-full inline-flex items-center gap-2 shadow-md transition-all text-[var(--chef-brown-deep)] no-underline"
           >
-            <span className="w-2 h-2 bg-white rounded-full animate-ping"></span>
+            <span className="w-2 h-2 bg-[var(--chef-brown-deep)] rounded-full animate-ping"></span>
             {t.header?.whatsappOrder || '📞 WhatsApp Order'}
           </a>
 
           {user ? (
-            <div className="flex items-center gap-2 bg-white/20 px-3.5 py-2 rounded-full border border-white/25 text-xs shadow-inner">
+            <div className="flex items-center gap-2 bg-white/70 px-3.5 py-2 rounded-full border border-white/80 text-xs shadow-inner">
               <div className="w-5 h-5 bg-gradient-to-br from-[#FFD54F] to-[#FF8A65] rounded-full text-white font-extrabold flex items-center justify-center text-[10px]">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <span className="max-w-[100px] truncate hidden sm:inline text-white font-bold">{user.name}</span>
+              <span className="max-w-[100px] truncate hidden sm:inline text-[var(--chef-brown-deep)] font-bold">{user.name}</span>
               <button
                 onClick={handleSignOut}
                 title="Sign Out"
-                className="hover:text-[#FED1DF] transition-colors cursor-pointer ml-1 text-white/80"
+                className="hover:text-[var(--chef-gold)] transition-colors cursor-pointer ml-1 text-[var(--chef-ink-soft)]"
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -707,7 +707,7 @@ export default function App() {
           ) : (
             <button
               onClick={() => setShowAuthModal(true)}
-              className="bg-white hover:bg-pink-50 text-[#F24E82] font-extrabold text-xs px-5 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
+              className="bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white font-extrabold text-xs px-5 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
             >
               {t.auth?.signIn || 'Sign In'}
             </button>
@@ -716,17 +716,17 @@ export default function App() {
       </header>
 
       {/* Sub menu tabs exactly aligned with standard Chef V menu options */}
-      <div className="bg-white border-b border-[#FAD0D6] flex justify-center py-2.5 px-4 shadow-sm scrollbar-thin overflow-x-auto">
+      <div className="bg-transparent flex justify-center py-3 px-4 scrollbar-thin overflow-x-auto">
         <div className="flex gap-2 text-xs md:text-sm">
           <button 
             onClick={() => setCurrentTab("home")} 
-            className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "home" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "home" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             {t.nav?.home || 'Restaurant Home'}
           </button>
           <button
             onClick={() => setCurrentTab("menu")}
-            className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "menu" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all cursor-pointer ${currentTab === "menu" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             {t.nav?.menu || 'Menu'}
           </button>
@@ -739,7 +739,7 @@ export default function App() {
               }
               setCurrentTab("album");
             }} 
-            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "album" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "album" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             <Award className="w-3.5 h-3.5" />
             {t.nav?.album || 'Collection Board'}
@@ -753,7 +753,7 @@ export default function App() {
               }
               setCurrentTab("spin");
             }} 
-            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "spin" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "spin" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             <Ticket className="w-3.5 h-3.5 animate-pulse" />
             {t.nav?.spin || 'Spin Package'}
@@ -767,21 +767,21 @@ export default function App() {
               }
               setCurrentTab("shop");
             }} 
-            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "shop" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "shop" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             <ShoppingBag className="w-3.5 h-3.5" />
             {t.nav?.shop || 'Stardust Shop'}
           </button>
           <button 
             onClick={() => setCurrentTab("admin")} 
-            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "admin" ? "bg-slate-300 text-slate-800 shadow-sm" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "admin" ? "bg-slate-300 text-slate-800 shadow-sm" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             <Sliders className="w-3.5 h-3.5" />
             {t.nav?.admin || 'Admin rates'}
           </button>
           <button 
             onClick={() => setCurrentTab("members")} 
-            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "members" ? "bg-[#F24E82] text-white shadow-md" : "bg-slate-150 text-slate-700 hover:bg-slate-200"}`}
+            className={`px-4 py-2 rounded-full font-bold transition-all flex items-center gap-1.5 cursor-pointer ${currentTab === "members" ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] text-white shadow-md" : "bg-white/70 text-[var(--chef-ink-soft)] hover:bg-white"}`}
           >
             <Users className="w-3.5 h-3.5" />
             {t.nav?.members || 'Members'}
@@ -829,13 +829,13 @@ export default function App() {
         {currentTab === "home" && (
           <div className="flex-grow flex flex-col bg-[#FFF5F6]">
             {/* Soft Warm Header Gradient matching user uploaded receipt exact branding */}
-            <section className="bg-gradient-to-r from-[#F24E82] via-[#FF8A65] to-[#FFD54F] text-white py-14 px-4 md:px-12 text-center relative overflow-hidden flex flex-col items-center justify-center border-b border-pink-200">
+            <section className="text-white py-16 px-4 md:px-12 text-center relative overflow-hidden flex flex-col items-center justify-center border-b border-[var(--chef-line)] bg-[linear-gradient(135deg,#6b4430_0%,#3d2218_42%,#d89b44_100%)]">
               
               {/* Absolutes for pattern decoration */}
               <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full transform -translate-x-12 -translate-y-12"></div>
               <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/10 rounded-full transform translate-x-16 translate-y-16"></div>
 
-              <span className="bg-pink-100/30 backdrop-blur-md text-white border border-white/20 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 inline-flex items-center gap-1.5 shadow-sm transform hover:scale-105 transition-all">
+              <span className="bg-white/12 backdrop-blur-md text-[#fff7ef] border border-white/18 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 inline-flex items-center gap-1.5 shadow-sm transform hover:scale-105 transition-all">
                 📍 {t.home?.branches || t.hero?.badge || '7 Branches Across Klang Valley'}
               </span>
               
@@ -843,7 +843,7 @@ export default function App() {
                 {t.hero?.title1 || 'Affordable Western Food'} <br />{t.hero?.title2 || 'Starting from RM 9.90!'}
               </h2>
               
-              <p className="mt-4 text-sm md:text-base text-white/95 max-w-xl font-medium">
+              <p className="mt-4 text-sm md:text-base text-white/88 max-w-xl font-medium leading-7">
                 {t.hero?.description || 'Freshly cooked with quality spices · Dine-in or Takeaway'}
               </p>
 
@@ -854,7 +854,7 @@ export default function App() {
                     if (el) el.scrollIntoView({ behavior: 'smooth' });
                     showToast(t.home?.scrollHint || "Slowing scrolling down to Interactive Food Gallery!", "info");
                   }}
-                  className="bg-white hover:bg-pink-50 text-[#F24E82] font-bold px-8 py-3.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
+                  className="bg-white hover:bg-[#fff8f1] text-[var(--chef-brown-deep)] font-bold px-8 py-3.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
                 >
                   {t.hero?.viewMenu || 'View Menu'}
                 </button>
@@ -868,13 +868,13 @@ export default function App() {
             </section>
 
             {/* Quick Promo alert for Loyalty Card game */}
-            <section className="bg-white text-slate-800 py-6 px-4 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[#FAD0D6]">
+            <section className="glass-panel text-[var(--chef-ink)] py-6 px-4 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[var(--chef-line)] rounded-[28px] mx-4 md:mx-8 mt-6">
               <div className="flex items-center gap-4">
-                <div className="bg-gradient-to-br from-[#F24E82] to-[#FF8A65] p-2.5 text-white rounded-xl animate-bounce shadow-md">
+                <div className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] p-2.5 text-[var(--chef-brown-deep)] rounded-xl animate-bounce shadow-md">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-lg text-[#F24E82]">{ui.homePromo.title}</h3>
+                  <h3 className="font-bold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.homePromo.title}</h3>
                   <p className="text-xs text-slate-600 max-w-2xl mt-0.5">
                     {ui.homePromo.desc}
                   </p>
@@ -884,14 +884,14 @@ export default function App() {
                 {user ? (
                   <button 
                     onClick={() => setCurrentTab("album")}
-                    className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-6 py-2.5 rounded-full transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-md"
+                    className="bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white font-bold text-xs px-6 py-2.5 rounded-full transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-md"
                   >
                     {ui.homePromo.dashboard} <ChevronRight className="w-4 h-4" />
                   </button>
                 ) : (
                   <button 
                     onClick={() => setShowAuthModal(true)}
-                    className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-extrabold text-xs px-6 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
+                    className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] hover:brightness-105 text-[var(--chef-brown-deep)] font-extrabold text-xs px-6 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
                   >
                     {ui.homePromo.signInJoin}
                   </button>
@@ -902,30 +902,30 @@ export default function App() {
             {/* Food Gallery Section - Same as the real website screenshot */}
             <section className="py-12 px-4 md:px-12 max-w-7xl mx-auto w-full">
               <div className="text-center mb-10">
-                <h3 className="text-3xl font-extrabold text-[#F24E82] flex items-center justify-center gap-2">
-                  <ChefHat className="w-7 h-7 text-[#F24E82]" /> {ui.gallery.title}
+                <h3 className="text-3xl font-extrabold text-[var(--chef-brown-deep)] flex items-center justify-center gap-2 serif-heading">
+                  <ChefHat className="w-7 h-7 text-[var(--chef-gold)]" /> {ui.gallery.title}
                 </h3>
                 <p className="text-slate-600 text-sm mt-1">{ui.gallery.sub}</p>
-                <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
+                <div className="gold-divider mx-auto mt-3"></div>
               </div>
 
               <div id="recipe-gallery" className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 
                 {/* Product 1 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-[#FAD0D6] group flex flex-col">
+                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/grilled_chicken_chop_cartoon_1780735447825.png" 
                       alt={ui.gallery.cards[0].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
-                    <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
                       {ui.gallery.cards[0].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[0].title}</h4>
+                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[0].title}</h4>
                       <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[0].desc}</p>
                     </div>
                     <button 
@@ -936,7 +936,7 @@ export default function App() {
                           triggerSound("card_selected");
                         }
                       }}
-                      className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
+                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
                       {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
@@ -944,20 +944,20 @@ export default function App() {
                 </div>
 
                 {/* Product 2 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-[#FAD0D6] group flex flex-col">
+                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/chicken_baked_rice_cartoon_1780735567112.png" 
                       alt={ui.gallery.cards[1].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
-                    <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
                       {ui.gallery.cards[1].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[1].title}</h4>
+                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[1].title}</h4>
                       <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[1].desc}</p>
                     </div>
                     <button 
@@ -968,7 +968,7 @@ export default function App() {
                           triggerSound("card_selected");
                         }
                       }}
-                      className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
+                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
                       {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
@@ -976,20 +976,20 @@ export default function App() {
                 </div>
 
                 {/* Product 3 */}
-                <div className="bg-white rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all border border-[#FAD0D6] group flex flex-col">
+                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
                   <div className="relative aspect-video overflow-hidden">
                     <img 
                       src="/src/assets/images/chicken_cheese_gratin_cartoon_1780735583103.png" 
                       alt={ui.gallery.cards[2].alt}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                     />
-                    <div className="absolute top-3 right-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
                       {ui.gallery.cards[2].badge}
                     </div>
                   </div>
                   <div className="p-5 text-center flex-grow flex flex-col justify-between">
                     <div>
-                      <h4 className="font-extrabold text-lg text-slate-800">{ui.gallery.cards[2].title}</h4>
+                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[2].title}</h4>
                       <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[2].desc}</p>
                     </div>
                     <button 
@@ -1000,7 +1000,7 @@ export default function App() {
                           triggerSound("card_selected");
                         }
                       }}
-                      className="mt-4 bg-[#F24E82] hover:bg-[#E03E70] text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
+                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
                     >
                       {t.cards?.inspect || 'Inspect Food Card'}
                     </button>
@@ -1161,7 +1161,7 @@ export default function App() {
                 {ui.spin.title}
               </h2>
               <p className="text-slate-600 text-sm mt-1">{ui.spin.sub}</p>
-              <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
+              <div className="gold-divider mx-auto mt-3"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
@@ -1344,7 +1344,7 @@ export default function App() {
                 {ui.shop.title}
               </h2>
               <p className="text-slate-600 text-sm mt-1">{ui.shop.sub}</p>
-              <div className="w-20 h-1 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] mx-auto mt-3 rounded-full"></div>
+              <div className="gold-divider mx-auto mt-3"></div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
