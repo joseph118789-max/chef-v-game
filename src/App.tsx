@@ -83,7 +83,7 @@ export default function App() {
     return DEFAULT_ADMIN_CONFIG;
   });
 
-  const [currentTab, setCurrentTab] = useState<"home" | "menu" | "album" | "spin" | "shop" | "admin">("home");
+  const [currentTab, setCurrentTab] = useState<"home" | "menu" | "album" | "spin" | "shop" | "admin" | "members">("home");
 
   // i18n language state — initialize from localStorage so refreshes stick
   const [lang, setLangState] = useState<'en' | 'cn' | 'ms'>(() => {
@@ -791,32 +791,32 @@ export default function App() {
 
       {/* -------------------- STATS & STARDUST HEADER DISPLAY -------------------- */}
       {user && (
-        <div className="bg-white border-b border-[#FAD0D6] py-3 px-4 md:px-8 flex flex-wrap gap-4 justify-between items-center text-xs shadow-sm">
+        <div className="glass-panel py-3 px-4 md:px-8 flex flex-wrap gap-4 justify-between items-center text-xs shadow-sm border-t border-[var(--chef-line)]">
           <div className="flex gap-4 items-center">
-            <span className="flex items-center gap-1.5 text-slate-600">
-              <User className="w-3.5 h-3.5 text-[#F24E82]" />
-              {ui.stats.collector}: <strong className="text-slate-800 font-bold">{user.name}</strong>
+            <span className="flex items-center gap-1.5 text-[var(--chef-ink-soft)]">
+              <User className="w-3.5 h-3.5 text-[var(--chef-gold)]" />
+              {ui.stats.collector}: <strong className="text-[var(--chef-brown-deep)] font-bold">{user.name}</strong>
             </span>
-            <span className="hidden sm:inline text-slate-300">|</span>
-            <span className="flex items-center gap-1.5 text-slate-600">
+            <span className="hidden sm:inline text-[var(--chef-line-strong)]">|</span>
+            <span className="flex items-center gap-1.5 text-[var(--chef-ink-soft)]">
               <TrendingUp className="w-3.5 h-3.5 text-emerald-600" />
-              {ui.stats.totalSpent}: <strong className="text-emerald-600 font-bold">RM {user.totalSpent.toFixed(2)}</strong>
+              {ui.stats.totalSpent}: <strong className="text-emerald-700 font-bold">RM {user.totalSpent.toFixed(2)}</strong>
             </span>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
             {/* Guaranteed High drop tracking */}
-            <div className="bg-[#FFF5F6] px-3.5 py-1.5 rounded-full border border-[#FED1DF] flex items-center gap-2 text-[11px] text-slate-700">
-              <span className="text-[#F24E82] font-semibold animate-pulse">🌠 {ui.stats.pity}:</span>
-              <span className="font-bold text-slate-900">{user.pityCounter} / {adminConfig.pityThreshold}</span>
-              <span className="text-[10px] text-slate-500 font-mono">({ui.stats.opened}: {user.pityCounter})</span>
+            <div className="bg-[var(--chef-cream)] px-3.5 py-1.5 rounded-full border border-[var(--chef-line)] flex items-center gap-2 text-[11px] text-[var(--chef-ink)] shadow-sm">
+              <span className="text-[var(--chef-gold)] font-semibold animate-pulse">🌠 {ui.stats.pity}:</span>
+              <span className="font-bold text-[var(--chef-brown-deep)]">{user.pityCounter} / {adminConfig.pityThreshold}</span>
+              <span className="text-[10px] text-[var(--chef-ink-soft)] font-mono">({ui.stats.opened}: {user.pityCounter})</span>
             </div>
 
             {/* Glowing Stardust balance layout */}
-            <div className="bg-gradient-to-r from-pink-50 to-rose-100 px-4 py-1.5 rounded-full border border-pink-200 flex items-center gap-2.5 shadow-md">
-              <Coins className="w-4 h-4 text-[#F24E82]" />
-              <span className="text-slate-750 font-bold">{ui.stats.stardust}:</span>
-              <span className="font-extrabold text-[#F24E82] text-sm tracking-wider font-mono">{user.stardust} ⭐</span>
+            <div className="bg-[linear-gradient(135deg,#fff7ea,#f4ddbb)] px-4 py-1.5 rounded-full border border-[var(--chef-line)] flex items-center gap-2.5 shadow-md">
+              <Coins className="w-4 h-4 text-[var(--chef-gold)]" />
+              <span className="font-bold text-[var(--chef-ink)]">{ui.stats.stardust}:</span>
+              <span className="font-extrabold text-[var(--chef-brown-deep)] text-sm tracking-wider font-mono">{user.stardust} ⭐</span>
             </div>
           </div>
         </div>
@@ -1025,16 +1025,16 @@ export default function App() {
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center gap-2">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--chef-brown-deep)] tracking-tight flex items-center gap-2 serif-heading">
                   {ui.album.title}
                 </h2>
-                <p className="text-slate-600 text-sm mt-0.5">{ui.album.sub}</p>
+                <p className="text-[var(--chef-ink-soft)] text-sm mt-0.5">{ui.album.sub}</p>
               </div>
 
               <div className="flex flex-wrap gap-2">
                 <button 
                   onClick={() => setCurrentTab("spin")}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:brightness-110 font-bold text-xs px-5 py-2.5 rounded-full text-white inline-flex items-center gap-1.5 shadow-md cursor-pointer animate-pulse"
+                  className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] hover:brightness-105 font-bold text-xs px-5 py-2.5 rounded-full text-[var(--chef-brown-deep)] inline-flex items-center gap-1.5 shadow-md cursor-pointer"
                 >
                   <Ticket className="w-4 h-4 animate-bounce text-white" /> {ui.album.scan}
                 </button>
@@ -1053,8 +1053,8 @@ export default function App() {
               const countOfTotalInStars = starCards.filter(c => (user.collectedIds[c.id] || 0) > 0).length;
 
               return (
-                <div key={starLevel} className="mb-10 bg-white rounded-3xl p-6 md:p-8 shadow-md border border-[#FAD0D6]">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-pink-100 pb-4 mb-6">
+                <div key={starLevel} className="mb-10 premium-card rounded-3xl p-6 md:p-8 shadow-md border border-[var(--chef-line)]">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center border-b border-[var(--chef-line)] pb-4 mb-6">
                     <div className="flex items-center gap-2">
                       <span className="flex">
                         {Array.from({ length: starLevel }).map((_, i) => (
@@ -1065,7 +1065,7 @@ export default function App() {
                         {ui.album.packs[starLevel - 1]}
                       </h3>
                     </div>
-                    <span className="text-xs bg-[#FFF5F6] mt-2 sm:mt-0 font-bold px-4 py-2 rounded-full text-[#F24E82] border border-[#FED1DF] self-start sm:self-auto">
+                    <span className="text-xs bg-[var(--chef-cream)] mt-2 sm:mt-0 font-bold px-4 py-2 rounded-full text-[var(--chef-brown-deep)] border border-[var(--chef-line)] self-start sm:self-auto">
                       {ui.album.progress(countOfTotalInStars)}
                     </span>
                   </div>
@@ -1085,15 +1085,15 @@ export default function App() {
                               ? starLevel === 3
                                 ? "bg-white border-amber-400 shadow-[0_0_20px_rgba(234,179,8,0.15)] hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] transform hover:-translate-y-1"
                                 : starLevel === 2
-                                  ? "bg-white border-slate-350 shadow-md transform hover:-translate-y-1 hover:shadow-indigo-100"
-                                  : "bg-white border-pink-200 shadow-md transform hover:-translate-y-1 hover:shadow-pink-100"
-                              : `bg-[#FFF9FA]/65 border-2 border-dashed border-pink-200/80 opacity-55 hover:opacity-75`
+                                  ? "bg-white border-[#cdb896] shadow-md transform hover:-translate-y-1 hover:shadow-amber-100"
+                                  : "bg-white border-[var(--chef-line)] shadow-md transform hover:-translate-y-1 hover:shadow-amber-100"
+                              : `bg-[rgba(255,248,240,0.72)] border-2 border-dashed border-[var(--chef-line)] opacity-55 hover:opacity-75`
                           }`}
                           style={{ minHeight: "340px" }}
                         >
                           {/* Duplicate badge indicator */}
                           {hasCard && (
-                            <div className="absolute top-3 left-3 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white font-extrabold text-xs px-3.5 py-1 rounded-full z-10 shadow border border-white/20 select-none">
+                            <div className="absolute top-3 left-3 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-gold))] text-white font-extrabold text-xs px-3.5 py-1 rounded-full z-10 shadow border border-white/20 select-none">
                               {ui.album.collected(countCollected)}
                             </div>
                           )}
@@ -1104,7 +1104,7 @@ export default function App() {
                             </div>
                           )}
 
-                          <div className="relative h-44 w-full select-none overflow-hidden bg-slate-50 border-b border-[#FAD0D6]">
+                          <div className="relative h-44 w-full select-none overflow-hidden bg-[var(--chef-cream)] border-b border-[var(--chef-line)]">
                             {hasCard ? (
                               <img 
                                 src={card.image} 
@@ -1113,7 +1113,7 @@ export default function App() {
                               />
                             ) : (
                               <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 p-5 text-center">
-                                <Lock className="w-8 h-8 mb-2 opacity-45 text-[#F24E82]" />
+                                <Lock className="w-8 h-8 mb-2 opacity-45 text-[var(--chef-gold)]" />
                                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">{ui.album.locked}</span>
                               </div>
                             )}
@@ -1125,7 +1125,7 @@ export default function App() {
                                 <h4 className={`font-bold mt-1 ${hasCard ? "text-slate-800" : "text-slate-400"}`}>
                                   {card.name}
                                 </h4>
-                                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full z-5 shrink-0 ${hasCard ? "bg-pink-150 text-[#F24E82]" : "bg-slate-100 text-slate-400"}`}>
+                                <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full z-5 shrink-0 ${hasCard ? "bg-[var(--chef-cream)] text-[var(--chef-brown)] border border-[var(--chef-line)]" : "bg-slate-100 text-slate-400"}`}>
                                   {card.value}
                                 </span>
                               </div>
@@ -1136,9 +1136,9 @@ export default function App() {
 
                             {/* Glow indicators inside unlocked items */}
                             {hasCard && (
-                              <div className="border-t border-pink-105 mt-4 pt-3 flex justify-between items-center text-[10px] text-[#F24E82] font-semibold">
+                              <div className="border-t border-[var(--chef-line)] mt-4 pt-3 flex justify-between items-center text-[10px] text-[var(--chef-brown)] font-semibold">
                                 <span className="flex items-center gap-1">{ui.album.level(Math.min(countCollected, 10))}</span>
-                                <span className="hover:underline text-[#FF8A65] cursor-pointer">{ui.album.details}</span>
+                                <span className="hover:underline text-[var(--chef-gold)] cursor-pointer">{ui.album.details}</span>
                               </div>
                             )}
                           </div>
@@ -1157,7 +1157,7 @@ export default function App() {
           <div className="py-10 px-4 md:px-12 max-w-5xl mx-auto w-full flex-grow flex flex-col">
             
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center justify-center gap-2">
+              <h2 className="text-3xl font-extrabold text-[var(--chef-brown-deep)] tracking-tight flex items-center justify-center gap-2 serif-heading">
                 {ui.spin.title}
               </h2>
               <p className="text-slate-600 text-sm mt-1">{ui.spin.sub}</p>
@@ -1167,14 +1167,14 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
               
               {/* Receipt Uploader column */}
-              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-[#FAD0D6] flex flex-col">
-                <h3 className="font-bold text-slate-800 text-lg mb-4 flex items-center gap-2 border-b border-pink-100 pb-3">
-                  <Camera className="w-5 h-5 text-[#F24E82]" /> {ui.spin.step1}
+              <div className="premium-card rounded-3xl p-6 md:p-8 shadow-sm border border-[var(--chef-line)] flex flex-col">
+                <h3 className="font-bold text-[var(--chef-brown-deep)] text-lg mb-4 flex items-center gap-2 border-b border-[var(--chef-line)] pb-3 serif-heading">
+                  <Camera className="w-5 h-5 text-[var(--chef-gold)]" /> {ui.spin.step1}
                 </h3>
 
                 {/* Quick Simulation Options */}
-                <div className="mb-5 bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                  <span className="text-xs font-bold text-[#F24E82] block mb-2.5 uppercase tracking-wider">
+                <div className="mb-5 bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
+                  <span className="text-xs font-bold text-[var(--chef-brown)] block mb-2.5 uppercase tracking-wider">
                     {ui.spin.presets}
                   </span>
                   <div className="space-y-2">
@@ -1183,13 +1183,13 @@ export default function App() {
                         key={rec.id}
                         type="button"
                         onClick={() => applySampleReceipt(i)}
-                        className="w-full text-left bg-white hover:bg-pink-50/40 border border-pink-100 hover:border-[#F24E82] p-2.5 rounded-xl transition-all flex justify-between items-center text-xs text-slate-700 cursor-pointer shadow-xs"
+                        className="w-full text-left bg-white hover:bg-[var(--chef-cream)]/70 border border-[var(--chef-line)] hover:border-[var(--chef-gold)] p-2.5 rounded-xl transition-all flex justify-between items-center text-xs text-slate-700 cursor-pointer shadow-xs"
                       >
                         <div className="truncate pr-2">
                           <strong className="block text-slate-800">{rec.store}</strong>
                           <span className="text-[10px] text-slate-500 block truncate mt-0.5">{rec.items}</span>
                         </div>
-                        <span className="bg-[#FFF5F6] text-[#F24E82] border border-pink-200 px-2 py-1 rounded-md font-bold shrink-0">
+                        <span className="bg-[var(--chef-cream)] text-[var(--chef-brown)] border border-[var(--chef-line)] px-2 py-1 rounded-md font-bold shrink-0">
                           RM {rec.total.toFixed(2)}
                         </span>
                       </button>
@@ -1200,7 +1200,7 @@ export default function App() {
                 {/* Real drag drop uploader mock */}
                 <div 
                   className={`border-2 border-dashed rounded-3xl p-6 text-center transition-all ${
-                    dragOverReceipt ? "border-[#F24E82] bg-pink-100/30" : "border-pink-200 hover:border-[#F24E82] bg-[#FFFBFB]"
+                    dragOverReceipt ? "border-[var(--chef-gold)] bg-[rgba(248,228,193,0.38)]" : "border-[var(--chef-line)] hover:border-[var(--chef-gold)] bg-[#fffdf8]"
                   }`}
                   onDragOver={(e) => { e.preventDefault(); setDragOverReceipt(true); }}
                   onDragLeave={() => setDragOverReceipt(false)}
@@ -1218,20 +1218,20 @@ export default function App() {
                       onChange={handleReceiptImageUpload} 
                       className="hidden" 
                     />
-                    <Upload className="w-10 h-10 text-pink-300 mx-auto mb-3" />
+                    <Upload className="w-10 h-10 text-[var(--chef-gold)] mx-auto mb-3" />
                     <span className="text-sm font-semibold text-slate-800 block">{ui.spin.upload}</span>
                     <span className="text-xs text-slate-400 mt-1 block">{ui.spin.formats}</span>
                   </label>
                 </div>
 
                 {uploadedFile && scanResults && (
-                  <div className="mt-6 bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
+                  <div className="mt-6 bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
                     <div className="flex justify-between items-start mb-3 border-b border-pink-100 pb-2">
                       <div className="truncate pr-2">
-                        <span className="text-xs bg-[#FFF5F6] text-[#F24E82] border border-pink-250 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wide">{ui.spin.ready}</span>
+                        <span className="text-xs bg-white text-[var(--chef-brown)] border border-[var(--chef-line)] px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wide">{ui.spin.ready}</span>
                         <h4 className="text-sm font-extrabold text-slate-800 truncate mt-1">{uploadedFile.name}</h4>
                       </div>
-                      <button onClick={resetReceiptScanner} className="text-[#F24E82] hover:text-red-500 cursor-pointer">
+                      <button onClick={resetReceiptScanner} className="text-[var(--chef-brown)] hover:text-red-600 cursor-pointer">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -1260,7 +1260,7 @@ export default function App() {
                           <button
                             type="button"
                             onClick={startReceiptScan}
-                            className="w-full bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                            className="w-full bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all flex items-center justify-center gap-1.5 cursor-pointer"
                           >
                             <Sparkles className="w-4 h-4" /> {ui.spin.triggerScan}
                           </button>
@@ -1272,17 +1272,17 @@ export default function App() {
               </div>
 
               {/* Dynamic Spin Wheel Column */}
-              <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-[#FAD0D6] flex flex-col items-center">
-                <h3 className="font-bold text-slate-800 text-lg mb-6 self-start flex items-center gap-2 border-b border-pink-100 pb-3 w-full">
-                  <Ticket className="w-5 h-5 text-[#F24E82]" /> {ui.spin.step2}
+              <div className="premium-card rounded-3xl p-6 md:p-8 shadow-sm border border-[var(--chef-line)] flex flex-col items-center">
+                <h3 className="font-bold text-[var(--chef-brown-deep)] text-lg mb-6 self-start flex items-center gap-2 border-b border-[var(--chef-line)] pb-3 w-full serif-heading">
+                  <Ticket className="w-5 h-5 text-[var(--chef-gold)]" /> {ui.spin.step2}
                 </h3>
 
                 {/* Spin Wheel graphic */}
-                <div className="relative w-64 h-64 md:w-72 md:h-72 my-4 rounded-full border-8 border-pink-100 bg-[#FFF5F6] flex items-center justify-center overflow-hidden shadow-xl">
+                <div className="relative w-64 h-64 md:w-72 md:h-72 my-4 rounded-full border-8 border-[var(--chef-line)] bg-[var(--chef-cream)] flex items-center justify-center overflow-hidden shadow-xl">
                   
                   {/* Pin locator pointer */}
                   <div className="absolute top-0 z-30 -translate-y-2">
-                    <div className="w-6 h-6 bg-[#F24E82] border-2 border-white transform rotate-45 rounded-tl-full rounded-br-2xl shadow-xl"></div>
+                    <div className="w-6 h-6 bg-[var(--chef-brown)] border-2 border-white transform rotate-45 rounded-tl-full rounded-br-2xl shadow-xl"></div>
                   </div>
 
                   {/* Inside sector divisions */}
@@ -1290,7 +1290,7 @@ export default function App() {
                     className="w-full h-full rounded-full transition-transform duration-[3500ms] ease-out flex items-center justify-center"
                     style={{ 
                       transform: `rotate(${spinDeg}deg)`,
-                      background: "conic-gradient(#FFB1C1 0deg 120deg, #FF9E80 120deg 240deg, #F24E82 240deg 360deg)"
+                      background: "conic-gradient(#ecd0a1 0deg 120deg, #d89b44 120deg 240deg, #6b4430 240deg 360deg)"
                     }}
                   >
                     {/* Sector Text Labels */}
@@ -1306,7 +1306,7 @@ export default function App() {
                   </div>
 
                   {/* Inner gold center wheel spin cap */}
-                  <div className="absolute w-20 h-20 bg-gradient-to-r from-[#F24E82] to-[#FF8A65] rounded-full border-4 border-white z-20 flex items-center justify-center shadow-lg">
+                  <div className="absolute w-20 h-20 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-gold))] rounded-full border-4 border-white z-20 flex items-center justify-center shadow-lg">
                     <span className="text-white font-black text-xs uppercase animate-pulse select-none">{t.spin?.centerLabel || 'CHEF V'}</span>
                   </div>
                 </div>
@@ -1321,7 +1321,7 @@ export default function App() {
                     disabled={isSpinning || scanStep !== 4}
                     className={`w-full font-extrabold text-sm py-4 px-6 rounded-2xl shadow-md transition-all cursor-pointer ${
                       scanStep === 4 
-                        ? "bg-[#F24E82] hover:bg-[#E03E70] text-white animate-pulse" 
+                        ? "bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white" 
                         : "bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200"
                     }`}
                   >
@@ -1337,10 +1337,10 @@ export default function App() {
 
         {/* ================= TAB 4: STARDUST BOOSTER SHOP ================= */}
         {currentTab === "shop" && user && (
-          <div className="py-10 px-4 md:px-12 max-w-6xl mx-auto w-full flex-grow flex flex-col bg-[#FFF5F6]">
+          <div className="py-10 px-4 md:px-12 max-w-6xl mx-auto w-full flex-grow flex flex-col bg-[linear-gradient(180deg,#fffaf4_0%,#fff4e7_100%)]">
             
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center justify-center gap-2">
+              <h2 className="text-3xl font-extrabold text-[var(--chef-brown-deep)] tracking-tight flex items-center justify-center gap-2 serif-heading">
                 {ui.shop.title}
               </h2>
               <p className="text-slate-600 text-sm mt-1">{ui.shop.sub}</p>
@@ -1350,8 +1350,8 @@ export default function App() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               
               {/* Product 1: 1-Star foil */}
-              <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-pink-100 hover:-translate-y-1 transition-all duration-300">
-                <span className="bg-[#FFF5F6] text-[#F24E82] border border-pink-200 text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
+              <div className="premium-card rounded-3xl p-6 border border-[var(--chef-line)] shadow-sm flex flex-col items-center text-center relative group hover:shadow-amber-100 hover:-translate-y-1 transition-all duration-300">
+                <span className="bg-[var(--chef-cream)] text-[var(--chef-brown)] border border-[var(--chef-line)] text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
                   {ui.shop.packs[0].tier}
                 </span>
                 
@@ -1368,7 +1368,7 @@ export default function App() {
                   {ui.shop.packs[0].desc}
                 </p>
 
-                <div className="mt-6 border-t border-pink-100 pt-5 w-full">
+                <div className="mt-6 border-t border-[var(--chef-line)] pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
                     <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Common: {adminConfig.rates.pack1.common}% · Rare: {adminConfig.rates.pack1.rare}%</span>
@@ -1376,7 +1376,7 @@ export default function App() {
 
                   <button
                     onClick={() => purchaseBoosterFromShop(1, 100)}
-                    className="w-full bg-[#FFF5F6] hover:bg-[#FED1DF]/40 border border-[#FED1DF] text-[#F24E82] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full bg-[var(--chef-cream)] hover:bg-[#f7ecd8] border border-[var(--chef-line)] text-[var(--chef-brown)] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     {ui.shop.packs[0].redeem}
                   </button>
@@ -1384,8 +1384,8 @@ export default function App() {
               </div>
 
               {/* Product 2: 2-Star Silver foil */}
-              <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-pink-100 hover:-translate-y-1 transition-all duration-300">
-                <span className="bg-[#FFF5F6] text-slate-500 border border-[#FED1DF] text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
+              <div className="premium-card rounded-3xl p-6 border border-[var(--chef-line)] shadow-sm flex flex-col items-center text-center relative group hover:shadow-amber-100 hover:-translate-y-1 transition-all duration-300">
+                <span className="bg-[var(--chef-cream)] text-[var(--chef-ink-soft)] border border-[var(--chef-line)] text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
                   {ui.shop.packs[1].tier}
                 </span>
                 
@@ -1402,7 +1402,7 @@ export default function App() {
                   {ui.shop.packs[1].desc}
                 </p>
 
-                <div className="mt-6 border-t border-pink-100 pt-5 w-full">
+                <div className="mt-6 border-t border-[var(--chef-line)] pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
                     <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Rare: {adminConfig.rates.pack2.rare}% · Legendary: {adminConfig.rates.pack2.legendary}%</span>
@@ -1410,7 +1410,7 @@ export default function App() {
 
                   <button
                     onClick={() => purchaseBoosterFromShop(2, 250)}
-                    className="w-full bg-[#FFF5F6] hover:bg-[#FED1DF]/40 border border-[#FED1DF] text-[#F24E82] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full bg-[var(--chef-cream)] hover:bg-[#f7ecd8] border border-[var(--chef-line)] text-[var(--chef-brown)] font-extrabold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     {ui.shop.packs[1].redeem}
                   </button>
@@ -1418,7 +1418,7 @@ export default function App() {
               </div>
 
               {/* Product 3: 3-Star Royal Gold foil */}
-              <div className="bg-white rounded-3xl p-6 border border-[#FAD0D6] shadow-sm flex flex-col items-center text-center relative group hover:shadow-amber-100 hover:-translate-y-1 transition-all border-amber-300 duration-300">
+              <div className="premium-card rounded-3xl p-6 border border-amber-300 shadow-sm flex flex-col items-center text-center relative group hover:shadow-amber-100 hover:-translate-y-1 transition-all duration-300">
                 <span className="bg-amber-100/30 text-amber-600 border border-amber-400 text-[10px] font-bold px-3 py-1 rounded-full uppercase absolute top-4 right-4">
                   {ui.shop.packs[2].tier}
                 </span>
@@ -1436,7 +1436,7 @@ export default function App() {
                   {ui.shop.packs[2].desc}
                 </p>
 
-                <div className="mt-6 border-t border-pink-100 pt-5 w-full">
+                <div className="mt-6 border-t border-[var(--chef-line)] pt-5 w-full">
                   <div className="flex justify-between items-center text-xs text-slate-600 mb-4 px-1">
                     <span>{ui.shop.dropRate}</span>
                     <span className="font-semibold text-slate-800">Legendary: {adminConfig.rates.pack3.legendary}% · 3-Star Guaranteed</span>
@@ -1444,7 +1444,7 @@ export default function App() {
 
                   <button
                     onClick={() => purchaseBoosterFromShop(3, 500)}
-                    className="w-full bg-gradient-to-r from-[#F24E82] to-[#FF8A65] text-white hover:brightness-110 font-extrabold text-xs py-3 rounded-xl shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
+                    className="w-full bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] hover:brightness-105 font-extrabold text-xs py-3 rounded-xl shadow transition-all flex items-center justify-center gap-1 cursor-pointer"
                   >
                     {ui.shop.packs[2].redeem}
                   </button>
@@ -1470,36 +1470,36 @@ export default function App() {
             
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
               <div>
-                <h2 className="text-2xl md:text-3xl font-extrabold text-[#F24E82] tracking-tight flex items-center gap-2">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-[var(--chef-brown-deep)] tracking-tight flex items-center gap-2 serif-heading">
                   {ui.admin.title}
                 </h2>
-                <p className="text-slate-600 text-sm mt-0.5">{ui.admin.sub}</p>
+                <p className="text-[var(--chef-ink-soft)] text-sm mt-0.5">{ui.admin.sub}</p>
               </div>
 
-              <div className="bg-white rounded-full px-4 py-1.5 flex items-center gap-2 text-xs text-slate-500 border border-pink-200 shadow-xs">
-                <LockKeyhole className="w-3.5 h-3.5 text-[#F24E82]" />
+              <div className="glass-panel rounded-full px-4 py-1.5 flex items-center gap-2 text-xs text-[var(--chef-ink-soft)] border border-[var(--chef-line)] shadow-xs">
+                <LockKeyhole className="w-3.5 h-3.5 text-[var(--chef-gold)]" />
                 <span>{ui.admin.session}</span>
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-[#FAD0D6] flex flex-col gap-8">
+            <div className="premium-card rounded-3xl p-6 md:p-8 shadow-sm border border-[var(--chef-line)] flex flex-col gap-8">
               
               {/* Box 1: Drop Rates configuration */}
               <div>
-                <h3 className="font-extrabold text-slate-800 text-base mb-4 flex items-center gap-1 border-b pb-2 border-pink-100">
+                <h3 className="font-extrabold text-[var(--chef-brown-deep)] text-base mb-4 flex items-center gap-1 border-b pb-2 border-[var(--chef-line)] serif-heading">
                   {ui.admin.rates}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   
                   {/* Pack 1 */}
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#F24E82] mb-3 block">{ui.admin.packRates[0]}</h4>
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--chef-brown)] mb-3 block">{ui.admin.packRates[0]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.common}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.common}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack1.common}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1511,13 +1511,13 @@ export default function App() {
                               rates: { ...prev.rates, pack1: { ...prev.rates.pack1, common: val } }
                             }));
                           }}
-                          className="w-full accent-[#F24E82]"
+                          className="w-full accent-[var(--chef-brown)]"
                         />
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.rare}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.rare}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack1.rare}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1535,7 +1535,7 @@ export default function App() {
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.legendary}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack1.legendary}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack1.legendary}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1554,13 +1554,13 @@ export default function App() {
                   </div>
 
                   {/* Pack 2 */}
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
-                    <h4 className="font-bold text-xs uppercase tracking-wider text-[#FF8A65] mb-3 block">{ui.admin.packRates[1]}</h4>
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
+                    <h4 className="font-bold text-xs uppercase tracking-wider text-[var(--chef-gold)] mb-3 block">{ui.admin.packRates[1]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.common}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack2.common}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack2.common}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1572,7 +1572,7 @@ export default function App() {
                               rates: { ...prev.rates, pack2: { ...prev.rates.pack2, common: val } }
                             }));
                           }}
-                          className="w-full accent-[#F24E82]"
+                          className="w-full accent-[var(--chef-brown)]"
                         />
                       </div>
                       <div>
@@ -1596,7 +1596,7 @@ export default function App() {
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.legendary}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack2.legendary}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack2.legendary}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1615,13 +1615,13 @@ export default function App() {
                   </div>
 
                   {/* Pack 3 */}
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
                     <h4 className="font-bold text-xs uppercase tracking-wider text-amber-600 mb-3 block">{ui.admin.packRates[2]}</h4>
                     <div className="space-y-3 text-xs">
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.common}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.common}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack3.common}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1633,13 +1633,13 @@ export default function App() {
                               rates: { ...prev.rates, pack3: { ...prev.rates.pack3, common: val } }
                             }));
                           }}
-                          className="w-full accent-[#F24E82]"
+                          className="w-full accent-[var(--chef-brown)]"
                         />
                       </div>
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.rare}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.rare}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack3.rare}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1657,7 +1657,7 @@ export default function App() {
                       <div>
                         <div className="flex justify-between mb-1 text-slate-700">
                           <span>{ui.admin.legendary}</span>
-                          <span className="font-bold text-[#F24E82]">{adminConfig.rates.pack3.legendary}%</span>
+                          <span className="font-bold text-[var(--chef-brown)]">{adminConfig.rates.pack3.legendary}%</span>
                         </div>
                         <input 
                           type="range" min="0" max="100" 
@@ -1680,13 +1680,13 @@ export default function App() {
 
               {/* Box 2: Spent Tier limits & Pity counts */}
               <div>
-                <h3 className="font-extrabold text-slate-800 text-base mb-4 flex items-center gap-1 border-b pb-2 border-pink-100">
+                <h3 className="font-extrabold text-[var(--chef-brown-deep)] text-base mb-4 flex items-center gap-1 border-b pb-2 border-[var(--chef-line)] serif-heading">
                   {ui.admin.config}
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
                     <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.pity}</label>
                     <input 
                       type="number" 
@@ -1695,12 +1695,12 @@ export default function App() {
                         const val = parseInt(e.target.value) || 1;
                         setAdminConfig(prev => ({ ...prev, pityThreshold: val }));
                       }}
-                      className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
+                      className="w-full border border-[var(--chef-line)] rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[var(--chef-gold)] focus:border-[var(--chef-gold)] font-semibold"
                     />
                     <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.pityHelp}</span>
                   </div>
 
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
                     <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.spend}</label>
                     <input 
                       type="number" 
@@ -1712,12 +1712,12 @@ export default function App() {
                           receiptTiers: { ...prev.receiptTiers, tier2Receipt: val }
                         }));
                       }}
-                      className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
+                      className="w-full border border-[var(--chef-line)] rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[var(--chef-gold)] focus:border-[var(--chef-gold)] font-semibold"
                     />
                     <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.spendHelp}</span>
                   </div>
 
-                  <div className="bg-[#FFF5F6] p-4 rounded-2xl border border-[#FED1DF]">
+                  <div className="bg-[var(--chef-cream)] p-4 rounded-2xl border border-[var(--chef-line)]">
                     <label className="text-xs font-bold text-slate-750 block mb-2">{ui.admin.monthly}</label>
                     <input 
                       type="number" 
@@ -1726,7 +1726,7 @@ export default function App() {
                         const val = parseInt(e.target.value) || 1;
                         setAdminConfig(prev => ({ ...prev, ultimateMonthlyLimit: val }));
                       }}
-                      className="w-full border border-pink-200 rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[#F24E82] focus:border-[#F24E82] font-semibold"
+                      className="w-full border border-[var(--chef-line)] rounded-lg p-2.5 text-xs bg-white text-slate-800 focus:outline-[var(--chef-gold)] focus:border-[var(--chef-gold)] font-semibold"
                     />
                     <span className="text-[10px] text-slate-500 block mt-1.5">{ui.admin.monthlyHelp}</span>
                   </div>
@@ -1735,7 +1735,7 @@ export default function App() {
               </div>
 
               {/* Reset to system default button */}
-              <div className="flex justify-end border-t border-pink-100 pt-5">
+              <div className="flex justify-end border-t border-[var(--chef-line)] pt-5">
                 <button
                   type="button"
                   onClick={() => {
@@ -1743,7 +1743,7 @@ export default function App() {
                     showToast(t.toast?.restoredToast || "Admin rates restored to standard dining calibration!", "success");
                     triggerSound("Calibrator Chimes Reset");
                   }}
-                  className="bg-[#F24E82] hover:bg-[#E03E70] text-white px-6 py-2.5 rounded-full font-bold text-xs cursor-pointer transition-all shadow-sm"
+                  className="bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white px-6 py-2.5 rounded-full font-bold text-xs cursor-pointer transition-all shadow-sm"
                 >
                   {ui.admin.restore}
                 </button>
@@ -1756,20 +1756,20 @@ export default function App() {
       </main>
 
       {/* -------------------- FOOTER -------------------- */}
-      <footer className="bg-white text-slate-500 text-xs py-10 px-4 mt-auto border-t border-[#FAD0D6]">
+      <footer className="bg-white text-[var(--chef-ink-soft)] text-xs py-10 px-4 mt-auto border-t border-[var(--chef-line)]">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left">
-            <p className="font-extrabold text-[#F24E82] text-sm">{t.header?.title || 'Chef V Western Food'}</p>
+            <p className="font-extrabold text-[var(--chef-brown-deep)] text-sm serif-heading">{t.header?.title || 'Chef V Western Food'}</p>
             <p className="mt-1 font-light opacity-80 text-slate-400">{ui.footer.copyright}</p>
           </div>
           <div className="flex gap-4 opacity-80 text-slate-500">
-            <button onClick={() => showToast(t.toast?.branchCallPJ || "Simulating PJ branch call!", "info")} className="hover:text-[#F24E82] transition-colors">PJ Sect 14</button>
+            <button onClick={() => showToast(t.toast?.branchCallPJ || "Simulating PJ branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">PJ Sect 14</button>
             <span>·</span>
-            <button onClick={() => showToast(t.toast?.branchCallSS15 || "Simulating Subang SS15 branch call!", "info")} className="hover:text-[#F24E82] transition-colors">Subang SS15</button>
+            <button onClick={() => showToast(t.toast?.branchCallSS15 || "Simulating Subang SS15 branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">Subang SS15</button>
             <span>·</span>
-            <button onClick={() => showToast(t.toast?.branchCallCheras || "Simulating Cheras branch call!", "info")} className="hover:text-[#F24E82] transition-colors">{t.spin?.centerLabel || "CHEF V"}</button>
+            <button onClick={() => showToast(t.toast?.branchCallCheras || "Simulating Cheras branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">{t.spin?.centerLabel || "CHEF V"}</button>
             <span>·</span>
-            <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[#F24E82] transition-colors">{ui.footer.terms}</button>
+            <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[var(--chef-brown)] transition-colors">{ui.footer.terms}</button>
           </div>
         </div>
       </footer>
