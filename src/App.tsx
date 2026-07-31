@@ -1589,23 +1589,25 @@ export default function App() {
       </main>
 
       {/* -------------------- FOOTER -------------------- */}
-      <footer className="bg-white text-[var(--chef-ink-soft)] text-xs py-10 px-4 mt-auto border-t border-[var(--chef-line)]">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-center md:text-left">
-            <p className="font-extrabold text-[var(--chef-brown-deep)] text-sm serif-heading">{t.header?.title || 'Chef V Western Food'}</p>
-            <p className="mt-1 font-light opacity-80 text-slate-400">{ui.footer.copyright}</p>
+      {currentTab !== "home" && (
+        <footer className="bg-white text-[var(--chef-ink-soft)] text-xs py-10 px-4 mt-auto border-t border-[var(--chef-line)]">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-center md:text-left">
+              <p className="font-extrabold text-[var(--chef-brown-deep)] text-sm serif-heading">{t.header?.title || 'Chef V Western Food'}</p>
+              <p className="mt-1 font-light opacity-80 text-slate-400">{ui.footer.copyright}</p>
+            </div>
+            <div className="flex gap-4 opacity-80 text-slate-500">
+              <button onClick={() => showToast(t.toast?.branchCallPJ || "Simulating PJ branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">PJ Sect 14</button>
+              <span>·</span>
+              <button onClick={() => showToast(t.toast?.branchCallSS15 || "Simulating Subang SS15 branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">Subang SS15</button>
+              <span>·</span>
+              <button onClick={() => showToast(t.toast?.branchCallCheras || "Simulating Cheras branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">{t.spin?.centerLabel || "CHEF V"}</button>
+              <span>·</span>
+              <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[var(--chef-brown)] transition-colors">{ui.footer.terms}</button>
+            </div>
           </div>
-          <div className="flex gap-4 opacity-80 text-slate-500">
-            <button onClick={() => showToast(t.toast?.branchCallPJ || "Simulating PJ branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">PJ Sect 14</button>
-            <span>·</span>
-            <button onClick={() => showToast(t.toast?.branchCallSS15 || "Simulating Subang SS15 branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">Subang SS15</button>
-            <span>·</span>
-            <button onClick={() => showToast(t.toast?.branchCallCheras || "Simulating Cheras branch call!", "info")} className="hover:text-[var(--chef-brown)] transition-colors">{t.spin?.centerLabel || "CHEF V"}</button>
-            <span>·</span>
-            <button onClick={() => showToast(ui.footer.terms, "info")} className="hover:text-[var(--chef-brown)] transition-colors">{ui.footer.terms}</button>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* ================= MODAL: SEARCH/INSPECT CARD DETAIL PREVIEW ================= */}
       {selectedInspectCard && (
