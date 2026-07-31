@@ -55,6 +55,7 @@ import {
 import MembersPanel from "./features/members/index";
 import LanguageSwitcher from "./components/LanguageSwitcher";
 import RestaurantMenu from "./components/RestaurantMenu";
+import LandingPage from "./components/LandingPage";
 
 export default function App() {
   // ---- 1. State Initialization (with LocalStorage persistence) ----
@@ -827,189 +828,21 @@ export default function App() {
         
         {/* ================= TAB 1: RESTAURANT HOME HOME ================= */}
         {currentTab === "home" && (
-          <div className="flex-grow flex flex-col bg-[#FFF5F6]">
-            {/* Soft Warm Header Gradient matching user uploaded receipt exact branding */}
-            <section className="text-white py-16 px-4 md:px-12 text-center relative overflow-hidden flex flex-col items-center justify-center border-b border-[var(--chef-line)] bg-[linear-gradient(135deg,#6b4430_0%,#3d2218_42%,#d89b44_100%)]">
-              
-              {/* Absolutes for pattern decoration */}
-              <div className="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full transform -translate-x-12 -translate-y-12"></div>
-              <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/10 rounded-full transform translate-x-16 translate-y-16"></div>
-
-              <span className="bg-white/12 backdrop-blur-md text-[#fff7ef] border border-white/18 px-4 py-1.5 rounded-full text-xs font-semibold mb-5 inline-flex items-center gap-1.5 shadow-sm transform hover:scale-105 transition-all">
-                📍 {t.home?.branches || t.hero?.badge || '7 Branches Across Klang Valley'}
-              </span>
-              
-              <h2 className="text-3xl md:text-5xl font-extrabold leading-tight tracking-tight max-w-3xl text-white">
-                {t.hero?.title1 || 'Affordable Western Food'} <br />{t.hero?.title2 || 'Starting from RM 9.90!'}
-              </h2>
-              
-              <p className="mt-4 text-sm md:text-base text-white/88 max-w-xl font-medium leading-7">
-                {t.hero?.description || 'Freshly cooked with quality spices · Dine-in or Takeaway'}
-              </p>
-
-              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
-                <button 
-                  onClick={() => {
-                    const el = document.getElementById("recipe-gallery");
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                    showToast(t.home?.scrollHint || "Slowing scrolling down to Interactive Food Gallery!", "info");
-                  }}
-                  className="bg-white hover:bg-[#fff8f1] text-[var(--chef-brown-deep)] font-bold px-8 py-3.5 rounded-full shadow-lg transition-transform hover:-translate-y-0.5 cursor-pointer"
-                >
-                  {t.hero?.viewMenu || 'View Menu'}
-                </button>
-                <button 
-                  onClick={() => showToast(t.home?.branchesToast || "PJ Section 14, SS15 Subang, Cheras, Kepong, Puchong, Klang & Shah Alam branches found!", "success")}
-                  className="border border-white text-white hover:bg-white/10 font-bold px-8 py-3.5 rounded-full shadow-sm transition-transform hover:-translate-y-0.5 cursor-pointer"
-                >
-                  {t.hero?.findUs || 'Find Us'}
-                </button>
-              </div>
-            </section>
-
-            {/* Quick Promo alert for Loyalty Card game */}
-            <section className="glass-panel text-[var(--chef-ink)] py-6 px-4 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-[var(--chef-line)] rounded-[28px] mx-4 md:mx-8 mt-6">
-              <div className="flex items-center gap-4">
-                <div className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] p-2.5 text-[var(--chef-brown-deep)] rounded-xl animate-bounce shadow-md">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.homePromo.title}</h3>
-                  <p className="text-xs text-slate-600 max-w-2xl mt-0.5">
-                    {ui.homePromo.desc}
-                  </p>
-                </div>
-              </div>
-              <div>
-                {user ? (
-                  <button 
-                    onClick={() => setCurrentTab("album")}
-                    className="bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white font-bold text-xs px-6 py-2.5 rounded-full transition-all inline-flex items-center gap-1.5 cursor-pointer shadow-md"
-                  >
-                    {ui.homePromo.dashboard} <ChevronRight className="w-4 h-4" />
-                  </button>
-                ) : (
-                  <button 
-                    onClick={() => setShowAuthModal(true)}
-                    className="bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] hover:brightness-105 text-[var(--chef-brown-deep)] font-extrabold text-xs px-6 py-2.5 rounded-full transition-all shadow-md cursor-pointer"
-                  >
-                    {ui.homePromo.signInJoin}
-                  </button>
-                )}
-              </div>
-            </section>
-
-            {/* Food Gallery Section - Same as the real website screenshot */}
-            <section className="py-12 px-4 md:px-12 max-w-7xl mx-auto w-full">
-              <div className="text-center mb-10">
-                <h3 className="text-3xl font-extrabold text-[var(--chef-brown-deep)] flex items-center justify-center gap-2 serif-heading">
-                  <ChefHat className="w-7 h-7 text-[var(--chef-gold)]" /> {ui.gallery.title}
-                </h3>
-                <p className="text-slate-600 text-sm mt-1">{ui.gallery.sub}</p>
-                <div className="gold-divider mx-auto mt-3"></div>
-              </div>
-
-              <div id="recipe-gallery" className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                
-                {/* Product 1 */}
-                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img 
-                      src="/src/assets/images/grilled_chicken_chop_cartoon_1780735447825.png" 
-                      alt={ui.gallery.cards[0].alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
-                      {ui.gallery.cards[0].badge}
-                    </div>
-                  </div>
-                  <div className="p-5 text-center flex-grow flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[0].title}</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[0].desc}</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        const card = RESTAURANT_CARDS.find(c => c.id === "c1");
-                        if (card) {
-                          setSelectedInspectCard(card);
-                          triggerSound("card_selected");
-                        }
-                      }}
-                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
-                    >
-                      {t.cards?.inspect || 'Inspect Food Card'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Product 2 */}
-                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img 
-                      src="/src/assets/images/chicken_baked_rice_cartoon_1780735567112.png" 
-                      alt={ui.gallery.cards[1].alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
-                      {ui.gallery.cards[1].badge}
-                    </div>
-                  </div>
-                  <div className="p-5 text-center flex-grow flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[1].title}</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[1].desc}</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        const card = RESTAURANT_CARDS.find(c => c.id === "c5");
-                        if (card) {
-                          setSelectedInspectCard(card);
-                          triggerSound("card_selected");
-                        }
-                      }}
-                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
-                    >
-                      {t.cards?.inspect || 'Inspect Food Card'}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Product 3 */}
-                <div className="premium-card rounded-[28px] overflow-hidden hover:shadow-xl transition-all border border-white/70 group flex flex-col">
-                  <div className="relative aspect-video overflow-hidden">
-                    <img 
-                      src="/src/assets/images/chicken_cheese_gratin_cartoon_1780735583103.png" 
-                      alt={ui.gallery.cards[2].alt}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                    />
-                    <div className="absolute top-3 right-3 bg-[linear-gradient(135deg,var(--chef-gold-soft),var(--chef-gold))] text-[var(--chef-brown-deep)] text-xs font-extrabold px-3 py-1 rounded-full shadow">
-                      {ui.gallery.cards[2].badge}
-                    </div>
-                  </div>
-                  <div className="p-5 text-center flex-grow flex flex-col justify-between">
-                    <div>
-                      <h4 className="font-extrabold text-lg text-[var(--chef-brown-deep)] serif-heading">{ui.gallery.cards[2].title}</h4>
-                      <p className="text-slate-600 text-xs mt-1.5 leading-relaxed">{ui.gallery.cards[2].desc}</p>
-                    </div>
-                    <button 
-                      onClick={() => {
-                        const card = RESTAURANT_CARDS.find(c => c.id === "c8");
-                        if (card) {
-                          setSelectedInspectCard(card);
-                          triggerSound("card_selected");
-                        }
-                      }}
-                      className="mt-4 bg-[linear-gradient(135deg,var(--chef-brown),var(--chef-brown-deep))] hover:brightness-110 text-white text-xs font-bold py-2.5 px-4 rounded-full transition-colors cursor-pointer w-full text-center shadow-sm"
-                    >
-                      {t.cards?.inspect || 'Inspect Food Card'}
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-            </section>
-          </div>
+          <LandingPage
+            lang={lang}
+            onNav={setCurrentTab}
+            onInspectCard={(cardId) => {
+              const card = RESTAURANT_CARDS.find(c => c.id === cardId);
+              if (card) {
+                setSelectedInspectCard(card);
+                triggerSound("card_selected");
+              }
+            }}
+            onShowAuth={() => setShowAuthModal(true)}
+            isSignedIn={!!user}
+            ui={ui}
+            t={t}
+          />
         )}
 
         {/* ================= TAB 2: RESTAURANT MENU ================= */}
