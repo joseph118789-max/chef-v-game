@@ -111,6 +111,7 @@ export default function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [scanStep, setScanStep] = useState(0);
   const [scanResults, setScanResults] = useState<{ id: string; total: number; items: string; tier: number } | null>(null);
+  const scanTimersRef = useRef<number[]>([]);
 
   // Spin Wheel & Reward States
   const [isSpinning, setIsSpinning] = useState(false);
@@ -162,6 +163,12 @@ export default function App() {
       return () => clearTimeout(timer);
     }
   }, [toastMessage]);
+
+  useEffect(() => {
+    return () => {
+      scanTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    };
+  }, []);
 
   const showToast = (text: string, type: "success" | "info" | "error" = "success") => {
     setToastMessage({ text, type });
@@ -286,43 +293,64 @@ export default function App() {
   };
 
   // Scan Receipt Laser Action
+  const clearScanTimers = () => {
+    scanTimersRef.current.forEach((timer) => window.clearTimeout(timer));
+    scanTimersRef.current = [];
+  };
+
+  const finishReceiptVerification = (result: { id: string; total: number; items: string; tier: number }) => {
+    setIsScanning(false);
+    setScanStep(4);
+
+    if (user) {
+      setUser({
+        ...user,
+        totalReceiptsUploaded: user.totalReceiptsUploaded + 1,
+        totalSpent: user.totalSpent + result.total,
+      });
+    }
+
+    showToast(`${t.toast?.verifySuccessPrefix || "Verification Successful! Spent: RM"} ${result.total.toFixed(2)}. ${t.toast?.verifySuccessSuffix || "Spin Wheel unlocked!"}`, "success");
+  };
+
   const startReceiptScan = () => {
-    if (!uploadedFile || !scanResults) return;
+    if (isScanning) return;
+    if (!user) {
+      showToast(t.toast?.signInFirstScan || "Please sign in first to scan receipts!", "error");
+      setShowAuthModal(true);
+      return;
+    }
+    if (!uploadedFile || !scanResults) {
+      showToast("Upload a receipt first before verifying.", "error");
+      return;
+    }
+
+    clearScanTimers();
+    const result = scanResults;
     setIsScanning(true);
     setScanStep(1);
     triggerSound("Beep! Laser Scanner Activated");
 
-    // Phase 1: Laser sweep starts
-    setTimeout(() => {
+    scanTimersRef.current.push(window.setTimeout(() => {
       setScanStep(2);
       triggerSound("Buzz... Optical Character Recognition running");
-    }, 1200);
+    }, 700));
 
-    // Phase 2: Querying total and products
-    setTimeout(() => {
+    scanTimersRef.current.push(window.setTimeout(() => {
       setScanStep(3);
       triggerSound("Chime! Receipt analysis complete");
-    }, 2400);
+    }, 1400));
 
-    // Phase 3: Verified & reward allocated
-    setTimeout(() => {
-      setIsScanning(false);
-      setScanStep(4);
-      
-      // Update User Stats with spent amount
-      if (user) {
-        const updatedStats = { ...user };
-        updatedStats.totalReceiptsUploaded += 1;
-        updatedStats.totalSpent += scanResults.total;
-        setUser(updatedStats);
-      }
-      
-      showToast(`${t.toast?.verifySuccessPrefix || "Verification Successful! Spent: RM"} ${scanResults.total.toFixed(2)}. ${t.toast?.verifySuccessSuffix || "Spin Wheel unlocked!"}`, "success");
-    }, 3600);
+    scanTimersRef.current.push(window.setTimeout(() => {
+      finishReceiptVerification(result);
+      clearScanTimers();
+    }, 1900));
   };
 
   // Reset receipt screen to try again
   const resetReceiptScanner = () => {
+    clearScanTimers();
+    setIsScanning(false);
     setUploadedFile(null);
     setScanResults(null);
     setScanStep(0);
