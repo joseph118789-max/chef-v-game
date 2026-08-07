@@ -10,6 +10,7 @@ import { languageList } from './i18n/index.js';
 import { uiCopy } from './i18n/uiCopy';
 
 import React, { useState, useEffect, useRef } from "react";
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import {
   Sparkles,
   Upload,
@@ -173,11 +174,11 @@ export default function App() {
 
   // ---- 2. Core Game Logic ----
 
-  // Simulate Google Login
-  const handleGoogleLogin = (email: string, name: string) => {
-    const newUser = INITIAL_USER_STATS(email, name);
-    // Merge existing local data if any
-    const localSaved = localStorage.getItem(`chef_v_user_profile_${email}`);
+  const completeLogin = (email: string, name: string) => {
+    const safeEmail = email || `guest-${Date.now()}@chefv.local`;
+    const safeName = name || 'Chef V Guest';
+    const newUser = INITIAL_USER_STATS(safeEmail, safeName);
+    const localSaved = localStorage.getItem(`chef_v_user_profile_${safeEmail}`);
     if (localSaved) {
       try {
         setUser(JSON.parse(localSaved));
@@ -187,9 +188,33 @@ export default function App() {
     } else {
       setUser(newUser);
     }
-    showToast((t.toast?.signedIn || `Logged in successfully as ${name}! Welcome to Chef V Club.`).replace(/{name}/g, name), "success");
+    showToast((t.toast?.signedIn || `Logged in successfully as ${safeName}! Welcome to Chef V Club.`).replace(/{name}/g, safeName), "success");
     setShowAuthModal(false);
     triggerSound("Google Sign-In Chime");
+  };
+
+  const handleGoogleLogin = (email: string, name: string) => {
+    completeLogin(email, name);
+  };
+
+  const handleGoogleCredentialSuccess = (credentialResponse: CredentialResponse) => {
+    try {
+      const token = credentialResponse.credential;
+      if (!token) {
+        showToast('Google sign-in returned no credential.', 'error');
+        return;
+      }
+      const payloadPart = token.split('.')[1];
+      const payload = JSON.parse(atob(payloadPart.replace(/-/g, '+').replace(/_/g, '/')));
+      completeLogin(payload.email || '', payload.name || payload.given_name || 'Chef V Guest');
+    } catch (error) {
+      console.error('Google sign-in parse error', error);
+      showToast('Google sign-in failed. Please try again.', 'error');
+    }
+  };
+
+  const handleGoogleCredentialError = () => {
+    showToast('Google sign-in was cancelled or failed.', 'error');
   };
 
   const handleSignOut = () => {
@@ -1681,33 +1706,29 @@ export default function App() {
               <p className="text-slate-400 text-xs mt-1">{ui.authModal.desc}</p>
             </div>
 
-            <div className="space-y-3">
-              {/* Profile Account Option 1 from real metadata */}
-              <button
-                type="button"
-                onClick={() => handleGoogleLogin("kerja1.landbar@gmail.com", "ChefV VIP Customer")}
-                className="w-full text-left bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-orange-500/30 p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer"
-              >
-                <div className="w-9 h-9 bg-orange-600 rounded-full flex items-center justify-center text-slate-100 font-bold text-sm shrink-0">
-                  KL
-                </div>
-                <div className="truncate pr-1">
-                  <strong className="block text-slate-105 text-xs font-extrabold">kerja1.landbar@gmail.com</strong>
-                  <span className="text-[10px] text-slate-400 select-none">{ui.authModal.vip}</span>
-                </div>
-              </button>
+            <div className="space-y-4">
+              <div className="rounded-2xl border border-slate-800 bg-slate-950 p-4 flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleCredentialSuccess}
+                  onError={handleGoogleCredentialError}
+                  theme="filled_black"
+                  shape="pill"
+                  size="large"
+                  text="continue_with"
+                  width="320"
+                />
+              </div>
 
-              {/* Profile Account Option 2 */}
               <button
                 type="button"
-                onClick={() => handleGoogleLogin("anonymous@gmail.com", "Guest Diner")}
+                onClick={() => handleGoogleLogin("guest@chefv.local", "Guest Diner")}
                 className="w-full text-left bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-orange-500/30 p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer"
               >
                 <div className="w-9 h-9 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0">
                   G
                 </div>
                 <div className="truncate pr-1">
-                  <strong className="block text-slate-200 text-xs font-extrabold">anonymous@gmail.com</strong>
+                  <strong className="block text-slate-200 text-xs font-extrabold">Guest Diner</strong>
                   <span className="text-[10px] text-slate-400 select-none">{ui.authModal.guest}</span>
                 </div>
               </button>
