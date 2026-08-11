@@ -11,6 +11,7 @@ import { uiCopy } from './i18n/uiCopy';
 
 import React, { useState, useEffect, useRef } from "react";
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { createWorker } from 'tesseract.js';
 import {
   Sparkles,
   Upload,
@@ -257,7 +258,7 @@ export default function App() {
     showToast(t.toast?.sampleLoaded || "Sample receipt loaded. Ready to scan!", "info");
   };
 
-  // Custom File Uploader handler
+  // Custom File Uploader handler — runs real OCR via tesseract.js
   const handleReceiptImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!user) {
       showToast(t.toast?.signInFirstUpload || "Please sign in first to upload receipts!", "error");
@@ -265,31 +266,182 @@ export default function App() {
       return;
     }
     const files = e.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      clearScanTimers();
-      setIsScanning(false);
-      setScanStep(0);
-      setScanResults(null);
-      setScanError(null);
+    if (!files || files.length === 0) return;
+    const file = files[0];
 
-      setUploadedFile({
-        name: file.name,
-        url: URL.createObjectURL(file),
-        size: `${(file.size / 1024).toFixed(1)} KB`
+    clearScanTimers();
+    setIsScanning(false);
+    setScanStep(0);
+    setScanResults(null);
+    setScanError(null);
+
+    const fileUrl = URL.createObjectURL(file);
+    setUploadedFile({
+      name: file.name,
+      url: fileUrl,
+      size: `${(file.size / 1024).toFixed(1)} KB`
+    });
+
+    // Kick off real OCR
+    void runReceiptOcr(fileUrl);
+  };
+
+  // OCR pipeline: extract text, validate Chef V keywords + parse RM amount
+  const runReceiptOcr = async (fileUrl: string) => {
+    setIsScanning(true);
+    setScanStep(1);
+    triggerSound("Beep! Laser Scanner Activated");
+    showToast("Scanning receipt with OCR...", "info");
+
+    let worker;
+    try {
+      worker = await createWorker('eng', 1, {
+        workerPath: `${window.location.origin}/tesseract/worker.min.js`,
+        corePath: `${window.location.origin}/tesseract/tesseract-core-relaxedsimd-lstm.js`,
+        langPath: `${window.location.origin}/tesseract/lang`,
+        workerBlobURL: false,
+        logger: () => undefined,
       });
-
-      const lowerName = file.name.toLowerCase();
-      const looksLikeReceipt = /receipt|resit|invoice|bill|chef.?v|chefv/.test(lowerName);
-
-      if (!looksLikeReceipt) {
-        setScanError("This image does not look like a Chef V receipt. Please upload a real receipt photo.");
-        showToast("Invalid receipt image. Please upload a real Chef V receipt.", "error");
-        return;
-      }
-
-      showToast(t.toast?.receiptUploaded || "Receipt uploaded successfully. Press Start Scan!", "success");
+    } catch (err) {
+      console.error('OCR worker init failed', err);
+      setIsScanning(false);
+      setScanError("OCR engine failed to load. Please refresh and try again.");
+      showToast("OCR engine failed to load. Please refresh and try again.", "error");
+      return;
     }
+
+    let text = "";
+    try {
+      const { data } = await worker.recognize(fileUrl);
+      text = (data?.text || "").trim();
+    } catch (err) {
+      console.error('OCR recognize failed', err);
+      await worker.terminate();
+      setIsScanning(false);
+      setScanError("Could not read this image. Try a clearer photo.");
+      showToast("Could not read this image. Try a clearer photo.", "error");
+      return;
+    }
+    await worker.terminate();
+
+    if (!text || text.length < 8) {
+      setIsScanning(false);
+      setScanError("No text detected. Upload a clearer photo of a Chef V receipt.");
+      showToast("No text detected. Please upload a clearer photo.", "error");
+      return;
+    }
+
+    setScanStep(2);
+    triggerSound("Buzz... Optical Character Recognition running");
+    await new Promise((r) => setTimeout(r, 400));
+
+    // Validation: score-based — must look like an actual receipt
+    const upper = text.toUpperCase();
+    let score = 0;
+    const foundSignals: string[] = [];
+
+    // Hard requirement: must mention Chef V brand
+    const chefVKeywords = [
+      "CHEF V", "CHEFV", "CHEF'S", "FOOD PYLON", "WESTERN FOOD",
+      "MAKANAN BARAT", "SUNGAI WAY",
+    ];
+    const hasChefV = chefVKeywords.some((kw) => upper.includes(kw));
+    if (hasChefV) {
+      score += 20;
+      foundSignals.push("brand");
+    } else {
+      setIsScanning(false);
+      setScanError(
+        "This doesn't look like a Chef V receipt (no Chef V / Food Pylon / Western Food detected). Please upload a real receipt from any Chef V branch."
+      );
+      showToast("Not a Chef V receipt. Please upload a real receipt photo.", "error");
+      return;
+    }
+
+    // Receipt-structure signals (each adds to the score)
+    const structureSignals: Array<[RegExp, string]> = [
+      [/\bTOTAL\b/i, "TOTAL"],
+      [/\bSUB[-\s]?TOTAL\b/i, "SUBTOTAL"],
+      [/\bINVOICE\b/i, "INVOICE"],
+      [/\bRECEIPT\b/i, "RECEIPT"],
+      [/\bRESIT\b/i, "RESIT"],
+      [/\bSST\b/i, "SST"],
+      [/\bTAX\b/i, "TAX"],
+      [/\bCASH\b/i, "CASH"],
+      [/\bCHANGE\b/i, "CHANGE"],
+      [/\bFEEDME\b/i, "FEEDME"],
+      [/\b\d{2}\/\d{2}\/\d{4}\b/, "DATE"],
+      [/\b\+?60\d{1,2}[-\s]?\d{3,4}[-\s]?\d{4}\b/, "PHONE"],
+      [/\b[A-Z]\d{1,2}\s+[A-Z]/i, "ITEM_CODE"],
+      [/THANK YOU FOR VISITING/i, "THANK_YOU"],
+      [/OFFICIAL RECEIPT/i, "OFFICIAL"],
+      [/(?:CASHIER|ROLE\.CASHIER)/i, "CASHIER"],
+      [/(?:ORDER|ORDER NO|ORDER\s*#)/i, "ORDER_NO"],
+      [/(?:QTY|QUANTITY)/i, "QTY"],
+    ];
+    for (const [re, name] of structureSignals) {
+      if (re.test(text)) {
+        score += 15;
+        foundSignals.push(name);
+      }
+    }
+
+    // Parse RM amount — handle "RM 22.05", "MYR 22.05", "Total (MYR) 22.05", "RM22.05"
+    const amountRegex = /\(?\s*(?:RM|MYR|R M)\s*\)?\s*\(?\s*([0-9]{1,3}(?:[.,][0-9]{2}))\s*\)?/gi;
+    const matches: number[] = [];
+    let m: RegExpExecArray | null;
+    while ((m = amountRegex.exec(text)) !== null) {
+      const n = parseFloat(m[1].replace(",", "."));
+      if (Number.isFinite(n) && n > 0) matches.push(n);
+    }
+    // Fallback: any decimal in the bottom 30% of the text (where total usually is)
+    if (matches.length === 0) {
+      const tail = text.slice(Math.floor(text.length * 0.7));
+      const decimalRegex = /([0-9]{1,3}[.,][0-9]{2})/g;
+      while ((m = decimalRegex.exec(tail)) !== null) {
+        const n = parseFloat(m[1].replace(",", "."));
+        if (Number.isFinite(n) && n >= 5 && n <= 500) matches.push(n);
+      }
+    }
+    const total = matches.length > 0 ? Math.max(...matches) : null;
+
+    setScanStep(3);
+    triggerSound("Chime! Receipt analysis complete");
+    await new Promise((r) => setTimeout(r, 400));
+
+    // STRICT validation: must have multiple strong receipt signals
+    const STRUCTURE_THRESHOLD = 95; // brand (20) + 5+ other signals (75) = 95
+    const requiredSignals = ["INVOICE", "TOTAL", "DATE", "ITEM_CODE", "ORDER_NO", "QTY", "OFFICIAL", "THANK_YOU"];
+    const missingRequired = requiredSignals.filter((s) => !foundSignals.includes(s));
+
+    if (score < STRUCTURE_THRESHOLD || total === null || missingRequired.length > 4) {
+      const missing: string[] = [];
+      if (!foundSignals.includes("TOTAL") && !foundSignals.includes("SUBTOTAL")) missing.push("total amount");
+      if (!foundSignals.includes("INVOICE") && !foundSignals.includes("RECEIPT") && !foundSignals.includes("RESIT")) missing.push("invoice header");
+      if (!foundSignals.includes("DATE") && !foundSignals.includes("PHONE")) missing.push("date or phone");
+      if (!foundSignals.includes("ITEM_CODE") && !foundSignals.includes("QTY")) missing.push("item codes");
+      if (!foundSignals.includes("ORDER_NO") && !foundSignals.includes("INVOICE")) missing.push("order number");
+      const missingTxt = missing.length > 0 ? ` Missing: ${missing.join(", ")}.` : "";
+      setIsScanning(false);
+      setScanError(
+        `This doesn't look like a Chef V receipt (score ${score}/${STRUCTURE_THRESHOLD}).${missingTxt} Try a clearer, well-lit photo with the full receipt visible.`
+      );
+      showToast("Receipt not recognized. Try a clearer photo of a real Chef V receipt.", "error");
+      return;
+    }
+
+    const tier = total >= adminConfig.receiptTiers.tier3Receipt ? 3
+      : total >= adminConfig.receiptTiers.tier2Receipt ? 2
+      : 1;
+
+    const result = {
+      id: `REC-${Math.floor(1000 + Math.random() * 9000)}-OCR`,
+      total,
+      items: "Chef V receipt (OCR)",
+      tier,
+    };
+    setScanResults(result);
+    finishReceiptVerification(result);
   };
 
   // Scan Receipt Laser Action
@@ -328,20 +480,16 @@ export default function App() {
       showToast(scanError, "error");
       return;
     }
+    if (!scanResults) {
+      showToast("Scan data missing. Please re-upload the receipt.", "error");
+      return;
+    }
 
-    const inferredTotal = 22.05;
-    const inferredTier = inferredTotal >= adminConfig.receiptTiers.tier3Receipt ? 3 : inferredTotal >= adminConfig.receiptTiers.tier2Receipt ? 2 : 1;
-    const result = {
-      id: `REC-${Math.floor(1000 + Math.random() * 9000)}-RAW`,
-      total: inferredTotal,
-      items: "Chef V receipt upload",
-      tier: inferredTier,
-    };
-
+    // Reuse existing scanResults (from OCR or sample preset). Do NOT fabricate.
+    const result = scanResults;
     clearScanTimers();
     setIsScanning(true);
     setScanStep(1);
-    setScanResults(result);
     triggerSound("Beep! Laser Scanner Activated");
 
     scanTimersRef.current.push(window.setTimeout(() => {
