@@ -2,6 +2,7 @@
 // NRICInput — NRIC field with live validation + DOB preview
 // ============================================================
 import { useState, useEffect, useRef } from "react";
+import type * as React from "react";
 import { parseNRIC } from "../utils";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 

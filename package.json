@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "test:scoring": "tsx scripts/test-receipt-scoring.ts",
+    "test:members": "tsx scripts/test-member-utils.ts",
+    "test": "npm run lint && npm run test:scoring && npm run test:members"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

@@ -3,6 +3,7 @@
 // Manages internal view state and ties all sub-components together
 // ============================================================
 import { useState, useEffect, useCallback } from "react";
+import type * as React from "react";
 import {
   Users,
   LayoutDashboard,
@@ -39,34 +40,47 @@ type Tab = "dashboard" | "list" | "vouchers";
 export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) {
   const [view, setView] = useState<MembersView>("dashboard");
   const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>();
-  const [tab, setTab] = useState<Tab>("dashboard");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const members = getMembers();
   const branches = getBranches();
   const vouchers = getVouchers();
 
+  // Derive the active tab directly from the view so the indicator can never desync.
+  const tab: Tab =
+    view === "vouchers" ? "vouchers" :
+    view === "list" ? "list" :
+    "dashboard";
+  const showSubNav = view === "dashboard" || view === "list" || view === "vouchers";
+
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
-  // Check + issue birthday vouchers on mount
+  // Check + issue birthday vouchers on mount and on every refresh.
   useEffect(() => {
-    const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
+    const { issued, expired } = checkAndIssueBirthdayVouchers();
     if (issued > 0) {
       showToast(`🎂 ${issued} ` + (t.toast?.birthdayVouchersIssued || 'birthday voucher(s) auto-issued for this month!'), "success");
-      refresh();
     }
+    if (expired > 0) {
+      showToast(`⏰ ${expired} expired voucher(s) marked as expired.`, "info");
+    }
+    if (issued > 0 || expired > 0) refresh();
   }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleCheckBirthdayVouchers = () => {
-    const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
+    const { issued, alreadyActive, expired } = checkAndIssueBirthdayVouchers();
     if (issued > 0) {
       showToast(`🎂 ${issued} ` + (t.toast?.birthdayVouchersIssued || 'birthday voucher(s) issued for this month!'), "success");
+      refresh();
+    } else if (expired > 0) {
+      showToast(`⏰ ${expired} expired voucher(s) marked as expired.`, "info");
       refresh();
     } else if (alreadyActive > 0) {
       showToast(`✅ ${alreadyActive} ` + (t.toast?.birthdayVouchersAlreadyActive || 'birthday voucher(s) already active for this month.'), "info");
     } else {
       showToast((t.toast?.noBirthdayVouchers || 'No members have birthdays this month. Vouchers will be auto-issued when birthdays come up! 🎂'), "info");
     }
+    return { issued, alreadyActive };
   };
 
   const handleNavigate = (v: MembersView, memberId?: string) => {
@@ -86,7 +100,7 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
       if (result) {
         showToast(t.toast?.memberUpdated || 'Member updated successfully!', "success");
         // Re-check birthday vouchers in case DOB was changed to current month
-        const { issued, alreadyActive } = checkAndIssueBirthdayVouchers();
+        const { issued } = checkAndIssueBirthdayVouchers();
         if (issued > 0) {
           showToast(`🎂 ${issued} birthday voucher(s) issued for this month!`, "success");
         }
@@ -117,6 +131,7 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
     const member = getMemberById(memberId);
     deleteMember(memberId);
     showToast((t.toast?.memberDeleted || 'Member "{name}" deleted.').replace("{name}", member?.name ?? "unknown"), "info");
+    setSelectedMemberId(undefined);
     setView("list");
     refresh();
   };
@@ -149,7 +164,7 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
             {t.members?.sub || 'NRIC-based member tracking · Birthday vouchers · Multi-branch support'}
           </p>
         </div>
-        {view === "dashboard" && (
+        {(view === "dashboard" || view === "list") && (
           <button
             onClick={() => handleNavigate("form")}
             className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 shadow-md cursor-pointer"
@@ -160,20 +175,20 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
       </div>
 
       {/* Sub-nav tabs (Dashboard, Members list, Vouchers - not form/detail) */}
-      {(view === "dashboard" || view === "list" || view === "vouchers") && (
+      {showSubNav && (
         <div className="bg-white rounded-2xl border border-[#FAD0D6] p-1.5 flex gap-1 mb-6 shadow-sm w-max">
-          {NAV_TABS.map((t) => (
+          {NAV_TABS.map((navTab) => (
             <button
-              key={t.key}
-              onClick={() => { setTab(t.key); setView(t.key === "vouchers" ? "vouchers" : t.key === "list" ? "list" : "dashboard"); }}
+              key={navTab.key}
+              onClick={() => handleNavigate(navTab.key)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                tab === t.key
+                tab === navTab.key
                   ? "bg-[#F24E82] text-white shadow-sm"
                   : "text-slate-600 hover:bg-pink-50"
               }`}
             >
-              {t.icon}
-              {t.label}
+              {navTab.icon}
+              {navTab.label}
             </button>
           ))}
         </div>
@@ -214,7 +229,7 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
           branches={branches}
           t={t}
           onRedeem={handleRedeemVoucher}
-          onBack={() => { setView("dashboard"); setTab("dashboard"); }}
+          onBack={() => { setView("dashboard"); }}
         />
       )}
 
@@ -238,10 +253,18 @@ export default function MembersPanel({ showToast, t, lang }: MembersPanelProps) 
           branch={branches.find((b) => b.id === selectedMember.branchId)}
           vouchers={vouchers.filter((v) => v.memberId === selectedMemberId)}
           t={t}
-          onBack={() => setView("list")}
+          onBack={() => { setSelectedMemberId(undefined); setView("list"); }}
           onEdit={handleEditMember}
           onDelete={handleDeleteMember}
         />
+      )}
+
+      {view === "detail" && !selectedMember && (
+        // Member was deleted from another tab/session — recover by bouncing back.
+        // eslint-disable-next-line react/jsx-no-undef
+        <div className="bg-white rounded-3xl border border-pink-200 p-10 text-center text-slate-400 text-sm">
+          Member not found. <button className="text-[#F24E82] underline ml-1" onClick={() => { setSelectedMemberId(undefined); setView("list"); }}>Back to list</button>
+        </div>
       )}
     </div>
   );

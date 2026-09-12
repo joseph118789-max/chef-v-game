@@ -2,6 +2,7 @@
 // VoucherManagement — Search + redeem vouchers
 // ============================================================
 import { useState } from "react";
+import type * as React from "react";
 import {
   Search,
   Ticket,
@@ -24,6 +25,7 @@ interface VoucherManagementProps {
   onBack: () => void;
   t: any;
 
+  key?: React.Key;
 }
 
 type StatusFilter = "" | "active" | "redeemed" | "expired";
@@ -51,9 +53,10 @@ export default function VoucherManagement({
       v.voucherCode.toLowerCase().includes(q) ||
       (member?.name.toLowerCase().includes(q) ?? false);
     const matchesStatus = !statusFilter || v.status === statusFilter;
-    const matchesBranch =
-      !branchFilter ||
-      (statusFilter === "redeemed" && v.redeemedBranchId === branchFilter);
+    // Filter by the MEMBER's home branch (not the voucher's redeemed branch),
+    // so the filter works for active/expired vouchers too — previously it only
+    // worked for redeemed ones and silently returned 0 for the others.
+    const matchesBranch = !branchFilter || member?.branchId === branchFilter;
     return matchesSearch && matchesStatus && matchesBranch;
   });
 
@@ -68,7 +71,12 @@ export default function VoucherManagement({
   };
 
   const handleRedeemConfirm = () => {
-    if (!selectedVoucher || !redeemBranch) return;
+    if (!selectedVoucher) return;
+    if (!redeemBranch) {
+      // Previously a silent no-op — give the user feedback instead.
+      alert("Please select a branch before confirming redemption.");
+      return;
+    }
     onRedeem(selectedVoucher.id, redeemBranch);
     setShowRedeem(false);
     setSelectedVoucher(null);
@@ -96,9 +104,9 @@ export default function VoucherManagement({
         </button>
         <div>
           <h2 className="font-extrabold text-slate-800 text-lg flex items-center gap-2">
-            <Gift className="w-5 h-5 text-[#F24E82]" /> Voucher Management
+            <Gift className="w-5 h-5 text-[#F24E82]" /> {t.members?.vouchers?.title || "Voucher Management"}
           </h2>
-          <p className="text-slate-500 text-xs">Search and redeem birthday vouchers</p>
+          <p className="text-slate-500 text-xs">{t.members?.vouchers?.sub || "Search and redeem birthday vouchers"}</p>
         </div>
       </div>
 
@@ -110,7 +118,7 @@ export default function VoucherManagement({
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search voucher code or member name..."
+            placeholder={t.members?.vouchers?.searchPlaceholder || "Search voucher code or member name..."}
             className="w-full border border-pink-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-[#F24E82] focus:border-[#F24E82]"
           />
         </div>
@@ -138,7 +146,7 @@ export default function VoucherManagement({
           onChange={(e) => setBranchFilter(e.target.value)}
           className="border border-pink-200 rounded-xl px-3 py-2.5 text-sm bg-white focus:outline-[#F24E82] focus:border-[#F24E82]"
         >
-          <option value="">All Branches</option>
+          <option value="">{t.members?.list?.allBranches || "All Branches"}</option>
           {branches.map((b) => (
             <option key={b.id} value={b.id}>{b.name}</option>
           ))}
@@ -150,19 +158,19 @@ export default function VoucherManagement({
         {sorted.length === 0 ? (
           <div className="py-16 text-center text-slate-400">
             <Ticket className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <p className="font-semibold text-sm">No vouchers found</p>
+            <p className="font-semibold text-sm">{t.members?.vouchers?.noVouchers || "No vouchers found"}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[#FFF5F6] border-b border-[#FAD0D6]">
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">Code</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden sm:table-cell">Member</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden md:table-cell">Issued</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden lg:table-cell">Expires</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">Status</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden xl:table-cell">Redeemed At</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">{t.members?.vouchers?.columns?.code || "Code"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden sm:table-cell">{t.members?.vouchers?.columns?.member || "Member"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden md:table-cell">{t.members?.vouchers?.columns?.issued || "Issued"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden lg:table-cell">{t.members?.vouchers?.columns?.expires || "Expires"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">{t.members?.vouchers?.columns?.status || "Status"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden xl:table-cell">{t.members?.vouchers?.columns?.redeemedAt || "Redeemed At"}</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
@@ -208,7 +216,7 @@ export default function VoucherManagement({
                             onClick={() => handleRedeemClick(voucher)}
                             className="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-3 py-1.5 rounded-full transition-all cursor-pointer shadow-sm whitespace-nowrap"
                           >
-                            Redeem
+                            {t.members?.vouchers?.redeem || "Redeem"}
                           </button>
                         )}
                       </td>
@@ -225,23 +233,24 @@ export default function VoucherManagement({
       {selectedVoucher && (
         <ConfirmDialog
           open={showRedeem}
-          title="Redeem Voucher"
+          title={t.members?.vouchers?.redeemDialog?.title || "Redeem Voucher"}
           message={
             <div className="space-y-4">
               <p>
-                Redeem voucher <strong className="text-[#F24E82]">{selectedVoucher.voucherCode}</strong> for{" "}
-                <strong>{getMemberName(selectedVoucher.memberId)}</strong>?
+                {(t.members?.vouchers?.redeemDialog?.message || ((c: string, n: string) =>
+                  `Redeem voucher ${c} for ${n}?`
+                ))(selectedVoucher.voucherCode, getMemberName(selectedVoucher.memberId))}
               </p>
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                  Redeemed at branch <span className="text-red-500">*</span>
+                  {t.members?.vouchers?.redeemDialog?.branchLabel || "Redeemed at branch"} <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={redeemBranch}
                   onChange={(e) => setRedeemBranch(e.target.value)}
                   className="w-full border border-pink-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-[#F24E82] focus:border-[#F24E82]"
                 >
-                  <option value="">Select branch</option>
+                  <option value="">{t.members?.vouchers?.redeemDialog?.branchPlaceholder || "Select branch"}</option>
                   {branches.map((b) => (
                     <option key={b.id} value={b.id}>{b.name}</option>
                   ))}
@@ -249,8 +258,8 @@ export default function VoucherManagement({
               </div>
             </div>
           }
-          confirmLabel="Confirm Redemption"
-          cancelLabel="Cancel"
+          confirmLabel={t.members?.vouchers?.redeemDialog?.confirm || "Confirm Redemption"}
+          cancelLabel={t.members?.vouchers?.redeemDialog?.cancel || "Cancel"}
           onConfirm={handleRedeemConfirm}
           onCancel={() => setShowRedeem(false)}
         />

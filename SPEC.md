@@ -72,10 +72,10 @@ interface BirthdayVoucher {
 
 ### DOB Extraction Rules
 1. Strip dashes from NRIC
-2. Extract first 6 digits: `YYMMDD`
-3. Parse: `DD` = day (01-31), `MM` = month (01-12), `YY` = year
-4. Convert `YY` to full year: `YY >= 00 && YY <= 30` → `20YY`, else `19YY`
-5. Validate: day 01-31, month 01-12
+2. Extract first 6 digits: `YYMMDD` (year first, then month, then day)
+3. Parse: `YY` = year (last 2 digits), `MM` = month (01-12), `DD` = day (01-31)
+4. Convert `YY` to full year using a sliding window: `YY <= currentYear % 100` → `20YY`, else `19YY`. The window self-adjusts as decades roll over (in 2031, YY=31 → 2031 not 1931).
+5. Validate: day 01-31, month 01-12, and the resulting date must round-trip through `Date` (rejects Feb 30, Apr 31, etc.)
 6. Reject invalid NRIC formats
 
 ---

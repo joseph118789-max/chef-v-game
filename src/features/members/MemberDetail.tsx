@@ -2,6 +2,7 @@
 // MemberDetail — Single member view + voucher history
 // ============================================================
 import { useState } from "react";
+import type * as React from "react";
 import {
   ArrowLeft,
   Edit2,
@@ -25,6 +26,7 @@ interface MemberDetailProps {
   onEdit: (memberId: string) => void;
   onDelete: (memberId: string) => void;
   t: any;
+  key?: React.Key;
 }
 
 export default function MemberDetail({
@@ -50,20 +52,20 @@ export default function MemberDetail({
           onClick={onBack}
           className="flex items-center gap-2 text-slate-600 hover:text-[#F24E82] font-semibold text-xs transition-colors cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to Members
+          <ArrowLeft className="w-4 h-4" /> {t.members?.detail?.back || "Back to Members"}
         </button>
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(member.id)}
             className="flex items-center gap-1.5 bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-4 py-2 rounded-full transition-all cursor-pointer shadow-sm"
           >
-            <Edit2 className="w-3.5 h-3.5" /> Edit
+            <Edit2 className="w-3.5 h-3.5" /> {t.members?.detail?.edit || "Edit"}
           </button>
           <button
             onClick={() => setShowDelete(true)}
             className="flex items-center gap-1.5 bg-white hover:bg-red-50 text-red-500 border border-red-200 font-bold text-xs px-4 py-2 rounded-full transition-all cursor-pointer"
           >
-            <Trash2 className="w-3.5 h-3.5" /> Delete
+            <Trash2 className="w-3.5 h-3.5" /> {t.members?.detail?.delete || "Delete"}
           </button>
         </div>
       </div>
@@ -78,26 +80,26 @@ export default function MemberDetail({
             <div>
               <h2 className="font-extrabold text-white text-xl">{member.name}</h2>
               <p className="text-white/70 text-xs mt-0.5">
-                Member since {formatISODate(member.joinDate)}
+                {(t.members?.detail?.memberSince || ((d: string) => `Member since ${d}`))(formatISODate(member.joinDate))}
               </p>
             </div>
           </div>
         </div>
 
         <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <InfoRow icon={<CreditCard className="w-4 h-4 text-[#F24E82]" />} label="NRIC" value={maskNRIC(member.nric)} mono />
-          <InfoRow icon={<Mail className="w-4 h-4 text-[#F24E82]" />} label="Email" value={member.email} />
-          <InfoRow icon={<Phone className="w-4 h-4 text-[#F24E82]" />} label="Phone" value={member.phone} />
-          <InfoRow icon={<Calendar className="w-4 h-4 text-[#F24E82]" />} label="Date of Birth" value={formatDate(member.dateOfBirth)} />
+          <InfoRow icon={<CreditCard className="w-4 h-4 text-[#F24E82]" />} label={t.members?.detail?.info?.nric || "NRIC"} value={maskNRIC(member.nric)} mono />
+          <InfoRow icon={<Mail className="w-4 h-4 text-[#F24E82]" />} label={t.members?.detail?.info?.email || "Email"} value={member.email} />
+          <InfoRow icon={<Phone className="w-4 h-4 text-[#F24E82]" />} label={t.members?.detail?.info?.phone || "Phone"} value={member.phone} />
+          <InfoRow icon={<Calendar className="w-4 h-4 text-[#F24E82]" />} label={t.members?.detail?.info?.dob || "Date of Birth"} value={formatDate(member.dateOfBirth)} />
           <InfoRow
             icon={<MapPin className="w-4 h-4 text-[#F24E82]" />}
-            label="Branch"
+            label={t.members?.detail?.info?.branch || "Branch"}
             value={branch?.name ?? "—"}
           />
           <InfoRow
             icon={<Calendar className="w-4 h-4 text-[#F24E82]" />}
-            label="Join Date"
-            value={formatISODate(member.createdAt)}
+            label={t.members?.detail?.info?.lastUpdated || "Last Updated"}
+            value={formatISODate(member.updatedAt)}
           />
         </div>
       </div>
@@ -110,19 +112,19 @@ export default function MemberDetail({
 
         {sortedVouchers.length === 0 ? (
           <div className="py-10 text-center text-slate-400 text-sm">
-            No vouchers issued yet
+            {t.members?.detail?.noVouchers || "No vouchers issued yet"}
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-[#FFF5F6] border-b border-[#FAD0D6]">
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">Year</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">Voucher Code</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden sm:table-cell">Issued</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden md:table-cell">Expires</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">Status</th>
-                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden lg:table-cell">Redeemed At</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">{t.members?.detail?.voucherColumns?.year || "Year"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">{t.members?.detail?.voucherColumns?.code || "Voucher Code"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden sm:table-cell">{t.members?.detail?.voucherColumns?.issued || "Issued"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden md:table-cell">{t.members?.detail?.voucherColumns?.expires || "Expires"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider">{t.members?.detail?.voucherColumns?.status || "Status"}</th>
+                  <th className="text-left px-4 py-3 font-extrabold text-slate-700 text-xs uppercase tracking-wider hidden lg:table-cell">{t.members?.detail?.voucherColumns?.redeemedAt || "Redeemed At"}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-pink-50">
@@ -155,9 +157,13 @@ export default function MemberDetail({
       {/* Delete Confirmation */}
       <ConfirmDialog
         open={showDelete}
-        title="Delete Member?"
-        message={`Are you sure you want to delete ${member.name}? This will also remove all their voucher history. This action cannot be undone.`}
-        confirmLabel="Delete Member"
+        title={t.members?.detail?.deleteDialog?.title || "Delete Member?"}
+        message={
+          (t.members?.detail?.deleteDialog?.message || ((n: string) =>
+            `Are you sure you want to delete ${n}? This will also remove all their voucher history. This action cannot be undone.`
+          ))(member.name)
+        }
+        confirmLabel={t.members?.detail?.deleteDialog?.confirm || "Delete Member"}
         onConfirm={() => {
           setShowDelete(false);
           onDelete(member.id);

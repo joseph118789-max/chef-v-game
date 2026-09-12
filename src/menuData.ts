@@ -22,6 +22,7 @@ export interface DrinkItem {
   price: number;
   desc: string;
   descMy: string;
+  tag?: string;
 }
 
 export interface Branch {

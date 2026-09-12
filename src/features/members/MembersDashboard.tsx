@@ -10,8 +10,9 @@ import {
   ChevronRight,
   Gift,
 } from "lucide-react";
+import type * as React from "react";
 import { Branch, Member, BirthdayVoucher } from "./types";
-import { getCurrentMonth, formatDate, maskNRIC } from "./utils";
+import { getCurrentMonth, formatDate, maskNRIC, getUpcomingBirthdays } from "./utils";
 import StatsCard from "./components/StatsCard";
 
 interface MembersDashboardProps {
@@ -22,6 +23,7 @@ interface MembersDashboardProps {
   onIssueVouchers: () => { issued: number; alreadyActive: number };
   t: any;
 
+  key?: React.Key;
 }
 
 export default function MembersDashboard({
@@ -46,13 +48,8 @@ export default function MembersDashboard({
     return d.getMonth() + 1 === currentMonth;
   });
 
-  // Upcoming birthdays in next 30 days
-  const upcomingBirthdays = members
-    .filter((m) => {
-      const month = parseInt(m.dateOfBirth.split("-")[1], 10);
-      return month === currentMonth;
-    })
-    .slice(0, 5);
+  // Actual upcoming birthdays in the next 30 days (sorted by proximity).
+  const upcomingBirthdays = getUpcomingBirthdays(members, 30).slice(0, 5);
 
   // Recent members (last 5 joined)
   const recentMembers = [...members]
@@ -70,26 +67,26 @@ export default function MembersDashboard({
       {/* Stats Row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          label="Total Members"
+          label={t.members?.dashboard?.stats?.totalMembers || "Total Members"}
           value={members.length}
           icon={<Users className="w-5 h-5" />}
           color="pink"
         />
         <StatsCard
-          label="Birthday This Month"
+          label={t.members?.dashboard?.stats?.birthdayThisMonth || "Birthday This Month"}
           value={membersThisMonth.length}
           icon={<Cake className="w-5 h-5" />}
           color="amber"
-          subtext="Eligible for voucher"
+          subtext={t.members?.dashboard?.stats?.birthdayEligible || "Eligible for voucher"}
         />
         <StatsCard
-          label="Active Vouchers"
+          label={t.members?.dashboard?.stats?.activeVouchers || "Active Vouchers"}
           value={activeVouchers.length}
           icon={<Ticket className="w-5 h-5" />}
           color="emerald"
         />
         <StatsCard
-          label="Redeemed This Month"
+          label={t.members?.dashboard?.stats?.redeemedThisMonth || "Redeemed This Month"}
           value={redeemedThisMonth.length}
           icon={<CheckCircle className="w-5 h-5" />}
           color="blue"
@@ -102,19 +99,19 @@ export default function MembersDashboard({
           onClick={() => onNavigate("form")}
           className="bg-[#F24E82] hover:bg-[#E03E70] text-white font-bold text-xs px-5 py-2.5 rounded-full transition-all inline-flex items-center gap-2 shadow-md cursor-pointer"
         >
-          <Plus className="w-4 h-4" /> Add Member
+          <Plus className="w-4 h-4" /> {t.members?.dashboard?.actions?.add || t.members?.addMember || "Add Member"}
         </button>
         <button
           onClick={() => onNavigate("vouchers")}
           className="bg-white hover:bg-pink-50 text-[#F24E82] font-bold text-xs px-5 py-2.5 rounded-full border border-[#FED1DF] transition-all inline-flex items-center gap-2 cursor-pointer"
         >
-          <Gift className="w-4 h-4" /> Manage Vouchers
+          <Gift className="w-4 h-4" /> {t.members?.dashboard?.actions?.manageVouchers || "Manage Vouchers"}
         </button>
         <button
           onClick={handleIssueVouchers}
           className="bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold text-xs px-5 py-2.5 rounded-full border border-amber-300 transition-all inline-flex items-center gap-2 cursor-pointer"
         >
-          <Ticket className="w-4 h-4" /> Check Birthday Vouchers
+          <Ticket className="w-4 h-4" /> {t.members?.dashboard?.actions?.checkBirthday || "Check Birthday Vouchers"}
         </button>
       </div>
 
@@ -127,13 +124,13 @@ export default function MembersDashboard({
               onClick={() => onNavigate("list")}
               className="text-[#F24E82] hover:text-[#E03E70] text-xs font-semibold flex items-center gap-1 cursor-pointer"
             >
-              View all <ChevronRight className="w-3.5 h-3.5" />
+              {t.members?.dashboard?.viewAll || "View all"} <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
           {recentMembers.length === 0 ? (
             <div className="p-8 text-center text-slate-400 text-sm">
-              No members yet. Add your first member!
+              {t.members?.dashboard?.noMembers || "No members yet. Add your first member!"}
             </div>
           ) : (
             <ul className="divide-y divide-pink-50">
@@ -164,28 +161,44 @@ export default function MembersDashboard({
           <div className="px-6 py-4 border-b border-pink-100 flex justify-between items-center">
             <h3 className="font-extrabold text-slate-800 text-sm flex items-center gap-2">
               <Cake className="w-4 h-4 text-amber-500" />
-              Birthday This Month
+              {t.members?.dashboard?.upcomingBirthdays || "Upcoming Birthdays (next 30 days)"}
             </h3>
             <button
               onClick={() => onNavigate("list", undefined)}
               className="text-[#F24E82] hover:text-[#E03E70] text-xs font-semibold flex items-center gap-1 cursor-pointer"
             >
-              View all <ChevronRight className="w-3.5 h-3.5" />
+              {t.members?.dashboard?.viewAll || "View all"} <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
 
-          {membersThisMonth.length === 0 ? (
+          {upcomingBirthdays.length === 0 ? (
             <div className="p-8 text-center text-slate-400 text-sm">
-              No birthdays this month 🎂
+              {t.members?.dashboard?.noUpcoming || "No upcoming birthdays in the next 30 days 🎂"}
             </div>
           ) : (
             <ul className="divide-y divide-pink-50">
-              {membersThisMonth.slice(0, 5).map((member) => {
+              {upcomingBirthdays.map((bday) => {
+                const member = members.find((m) => m.id === bday.id);
+                if (!member) return null;
                 const voucher = vouchers.find(
                   (v) =>
                     v.memberId === member.id &&
                     v.issueYear === new Date().getFullYear()
                 );
+                const voucherLabel = voucher
+                  ? `${voucher.status === "redeemed" ? "✓ " : voucher.status === "expired" ? "⏰ " : ""}${voucher.voucherCode}`
+                  : null;
+                const voucherStyle = !voucher
+                  ? "bg-slate-100 text-slate-500 border-slate-200"
+                  : voucher.status === "redeemed"
+                    ? "bg-blue-100 text-blue-700 border-blue-300"
+                    : voucher.status === "expired"
+                      ? "bg-red-100 text-red-600 border-red-300"
+                      : "bg-emerald-100 text-emerald-700 border-emerald-300";
+                const whenLabel =
+                  bday.daysUntil === 0 ? (t.members?.dashboard?.today || "Today!") :
+                  bday.daysUntil === 1 ? (t.members?.dashboard?.tomorrow || "Tomorrow") :
+                  (t.members?.dashboard?.inDays || ((n: number) => `in ${n} days`))(bday.daysUntil);
                 return (
                   <li
                     key={member.id}
@@ -195,16 +208,16 @@ export default function MembersDashboard({
                     <div className="min-w-0">
                       <p className="font-bold text-slate-800 text-sm truncate">{member.name}</p>
                       <p className="text-amber-600 text-[11px] mt-0.5">
-                        🎂 {formatDate(member.dateOfBirth)}
+                        🎂 {formatDate(member.dateOfBirth)} · {whenLabel}
                       </p>
                     </div>
-                    {voucher ? (
-                      <span className="text-[10px] bg-emerald-100 text-emerald-700 border border-emerald-300 px-2 py-0.5 rounded-full font-bold shrink-0">
-                        Voucher: {voucher.voucherCode}
+                    {voucherLabel ? (
+                      <span className={`text-[10px] border px-2 py-0.5 rounded-full font-bold shrink-0 ${voucherStyle}`}>
+                        {voucherLabel}
                       </span>
                     ) : (
-                      <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-semibold shrink-0">
-                        No voucher
+                      <span className="text-[10px] bg-slate-100 text-slate-500 border border-slate-200 px-2 py-0.5 rounded-full font-semibold shrink-0">
+                        {t.members?.dashboard?.noVoucher || "No voucher"}
                       </span>
                     )}
                   </li>

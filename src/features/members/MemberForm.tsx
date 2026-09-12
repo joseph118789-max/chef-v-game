@@ -2,6 +2,7 @@
 // MemberForm — Add / Edit member
 // ============================================================
 import { useState, useEffect, useCallback } from "react";
+import type * as React from "react";
 import { ArrowLeft, Save, UserPlus } from "lucide-react";
 import { Branch, Member, MemberFormData } from "./types";
 import { parseNRIC } from "./utils";
@@ -15,6 +16,7 @@ interface MemberFormProps {
   onBack: () => void;
   t: any;
 
+  key?: React.Key;
 }
 
 const EMPTY_FORM: MemberFormData = {
@@ -60,25 +62,46 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
 
   const validate = (): boolean => {
     const errs: Partial<Record<keyof MemberFormData, string>> = {};
+    const e = t.members?.form?.errors || {};
 
-    if (!form.name.trim()) errs.name = "Name is required";
-    else if (form.name.trim().length < 2) errs.name = "Name must be at least 2 characters";
+    if (!form.name.trim()) errs.name = e.nameRequired || "Name is required";
+    else if (form.name.trim().length < 2) errs.name = e.nameTooShort || "Name must be at least 2 characters";
 
-    if (!form.email.trim()) errs.email = "Email is required";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = "Invalid email address";
+    if (!form.email.trim()) errs.email = e.emailRequired || "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = e.emailInvalid || "Invalid email address";
 
-    if (!form.phone.trim()) errs.phone = "Phone number is required";
-    else if (!/^[\d\s\-+\(\)]{7,15}$/.test(form.phone)) errs.phone = "Invalid phone number";
-
-    if (!form.nric.trim()) {
-      errs.nric = "NRIC is required";
-    } else if (!nricValid) {
-      errs.nric = nricError ?? "Invalid NRIC";
+    if (!form.phone.trim()) errs.phone = e.phoneRequired || "Phone number is required";
+    else {
+      const digits = form.phone.replace(/\D/g, "");
+      if (digits.length < 7 || digits.length > 15) {
+        errs.phone = e.phoneInvalid || "Phone must contain 7–15 digits";
+      }
     }
 
-    if (!form.dateOfBirth) errs.dateOfBirth = "Date of birth is required";
+    if (!form.nric.trim()) {
+      errs.nric = e.nricRequired || "NRIC is required";
+    } else if (!nricValid) {
+      errs.nric = nricError || (e.nricInvalid || "Invalid NRIC");
+    }
 
-    if (!form.branchId) errs.branchId = "Please select a branch";
+    if (!form.dateOfBirth) {
+      errs.dateOfBirth = e.dobRequired || "Date of birth is required";
+    } else if (!/^\d{2}-\d{2}-\d{4}$/.test(form.dateOfBirth)) {
+      errs.dateOfBirth = e.dobFormat || "Use DD-MM-YYYY format";
+    } else {
+      // Calendar roundtrip check (catches 31-02-2026 etc.)
+      const [dd, mm, yyyy] = form.dateOfBirth.split("-").map(Number);
+      const constructed = new Date(yyyy, mm - 1, dd);
+      if (
+        constructed.getFullYear() !== yyyy ||
+        constructed.getMonth() !== mm - 1 ||
+        constructed.getDate() !== dd
+      ) {
+        errs.dateOfBirth = e.dobInvalid || "Date of birth is not a real calendar date";
+      }
+    }
+
+    if (!form.branchId) errs.branchId = e.branchRequired || "Please select a branch";
 
     setErrors(errs);
     return Object.keys(errs).length === 0;
@@ -97,7 +120,11 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
     setSaving(false);
 
     if (result.success) {
-      setSuccessMsg(member ? "Member updated successfully!" : "Member added successfully!");
+      setSuccessMsg(
+        member
+          ? (t.members?.form?.successUpdate || "Member updated successfully!")
+          : (t.members?.form?.successAdd || "Member added successfully!")
+      );
       if (!member) {
         setForm(EMPTY_FORM);
         setNricValid(false);
@@ -135,10 +162,14 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         </button>
         <div>
           <h2 className="font-extrabold text-slate-800 text-lg">
-            {member ? "Edit Member" : "Add New Member"}
+            {member
+              ? (t.members?.form?.editTitle || "Edit Member")
+              : (t.members?.form?.addTitle || "Add New Member")}
           </h2>
           <p className="text-slate-500 text-xs">
-            {member ? "Update member information" : "Register a new restaurant member"}
+            {member
+              ? (t.members?.form?.editSub || "Update member information")
+              : (t.members?.form?.addSub || "Register a new restaurant member")}
           </p>
         </div>
       </div>
@@ -147,13 +178,13 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         {/* Name */}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
-            Full Name <span className="text-red-500">*</span>
+            {t.members?.form?.labels?.name || "Full Name"} <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setField("name", e.target.value)}
-            placeholder="e.g. Ahmad bin Abu"
+            placeholder={t.members?.form?.placeholders?.name || "e.g. Ahmad bin Abu"}
             className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors ${
               errors.name ? "border-red-400 bg-red-50" : "border-pink-200 focus:border-[#F24E82]"
             }`}
@@ -165,13 +196,13 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Email <span className="text-red-500">*</span>
+              {t.members?.form?.labels?.email || "Email"} <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setField("email", e.target.value)}
-              placeholder="ahmad@example.com"
+              placeholder={t.members?.form?.placeholders?.email || "ahmad@example.com"}
               className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors ${
                 errors.email ? "border-red-400 bg-red-50" : "border-pink-200 focus:border-[#F24E82]"
               }`}
@@ -181,13 +212,14 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1.5">
-              Phone <span className="text-red-500">*</span>
+              {t.members?.form?.labels?.phone || "Phone"} <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
               value={form.phone}
               onChange={(e) => setField("phone", e.target.value)}
-              placeholder="012-345 6789"
+              placeholder={t.members?.form?.placeholders?.phone || "012-345 6789"}
+              inputMode="tel"
               className={`w-full border rounded-xl px-4 py-2.5 text-sm focus:outline-none transition-colors ${
                 errors.phone ? "border-red-400 bg-red-50" : "border-pink-200 focus:border-[#F24E82]"
               }`}
@@ -199,7 +231,7 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         {/* NRIC */}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
-            NRIC / MyKad <span className="text-red-500">*</span>
+            {t.members?.form?.labels?.nric || "NRIC / MyKad"} <span className="text-red-500">*</span>
           </label>
           <NRICInput
             value={form.nric}
@@ -208,7 +240,7 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
             error={errors.nric}
           />
           <p className="text-slate-400 text-[11px] mt-1.5">
-            Malaysian IC format: YYMMDD-PB-XXX (e.g. 910115-01-1234). DOB is auto-extracted.
+            {t.members?.form?.nricHelp || "Malaysian IC format: YYMMDD-PB-XXX (e.g. 910115-01-1234). DOB is auto-extracted."}
           </p>
           {errors.nric && <p className="text-red-500 text-xs mt-1">{errors.nric}</p>}
         </div>
@@ -216,10 +248,10 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         {/* DOB (auto-filled from NRIC, editable) */}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
-            Date of Birth <span className="text-red-500">*</span>
+            {t.members?.form?.labels?.dob || "Date of Birth"} <span className="text-red-500">*</span>
             {nricValid && (
               <span className="ml-2 text-emerald-600 font-normal normal-case">
-                ← auto-filled from NRIC
+                {t.members?.form?.autoFilled || "← auto-filled from NRIC"}
               </span>
             )}
           </label>
@@ -227,7 +259,7 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
             type="text"
             value={form.dateOfBirth}
             onChange={(e) => setField("dateOfBirth", e.target.value)}
-            placeholder="DD-MM-YYYY"
+            placeholder={t.members?.form?.placeholders?.dob || "DD-MM-YYYY"}
             className={`w-full border rounded-xl px-4 py-2.5 text-sm font-mono focus:outline-none transition-colors ${
               errors.dateOfBirth ? "border-red-400 bg-red-50" : "border-pink-200 focus:border-[#F24E82]"
             }`}
@@ -238,7 +270,7 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
         {/* Branch */}
         <div>
           <label className="block text-xs font-bold text-slate-700 mb-1.5">
-            Registered Branch <span className="text-red-500">*</span>
+            {t.members?.form?.labels?.branch || "Registered Branch"} <span className="text-red-500">*</span>
           </label>
           <BranchSelect
             value={form.branchId}
@@ -262,7 +294,7 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
             onClick={onBack}
             className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition-all cursor-pointer"
           >
-            Cancel
+            {t.members?.form?.cancel || "Cancel"}
           </button>
           <button
             type="submit"
@@ -274,7 +306,9 @@ export default function MemberForm({ member, branches, t, onSave, onBack }: Memb
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                {member ? "Update Member" : "Add Member"}
+                {member
+                  ? (t.members?.form?.update || "Update Member")
+                  : (t.members?.form?.add || "Add Member")}
               </>
             )}
           </button>
