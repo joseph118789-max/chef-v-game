@@ -8,7 +8,7 @@ resources:
 images:
   - name: ghcr.io/seekn/chef-v-game-frontend
     newName: ghcr.io/joseph118789-max/chef-v-game-frontend
-    newTag: latest
+    newTag: dev
 patches:
   - target:
       kind: Deployment

@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: ghcr.io/joseph118789-max/chef-v-game-frontend:latest
+          image: ghcr.io/joseph118789-max/chef-v-game-frontend:dev
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
