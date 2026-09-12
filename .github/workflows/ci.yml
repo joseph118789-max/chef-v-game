@@ -80,6 +80,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           cache-to: type=gha,mode=max
+          no-cache-to: true
           build-args: VITE_API_URL=
 
   deploy-dev:
