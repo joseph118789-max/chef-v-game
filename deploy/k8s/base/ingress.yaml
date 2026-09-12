@@ -1,0 +1,28 @@
+# Chef V — k3s ingress (uses the bundled Traefik ingress controller)
+# Standard networking.k8s.io Ingress with the Traefik ingress class —
+# k3s ships Traefik by default, no extra CRDs required.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chef-v-game
+  namespace: chef-v-game
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.tls.certresolver: mytlschallenge
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: chef-v-game.seekn.site
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chef-v-game
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - chef-v-game.seekn.site

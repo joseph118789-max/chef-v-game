@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Base stack — same image tag everywhere; CI replaces it via
+# `kubectl set image` after `kubectl apply -k overlays/<env>`.
+resources:
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml
+  - ingress.yaml

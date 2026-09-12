@@ -1,0 +1,61 @@
+name: Deploy · Prod
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: seekn/chef-v-game-frontend
+
+jobs:
+  deploy-prod:
+    name: Deploy → Prod (k3s)
+    runs-on: ubuntu-latest
+    environment: prod
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_PROD }}" | base64 -d > $KUBECONFIG
+          chmod 600 $KUBECONFIG
+        env:
+          KUBECONFIG: /tmp/kubeconfig
+
+      - name: Extract image tag from git tag
+        id: tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}
+
+      - name: Deploy to k3s
+        run: |
+          cd deploy/k8s/overlays/prod
+          # inject the tagged image into the kustomization
+          sed "s|ghcr.io/seekn/chef-v-game-frontend:CHANGEME|${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }}|" \
+            kustomization.yaml > kustomization.yaml.tmp && mv kustomization.yaml.tmp kustomization.yaml
+          kubectl apply -k .
+          kubectl rollout status deployment/chef-v-game-frontend -n chef-v-game --timeout=120s
+
+      - name: Health check
+        run: |
+          sleep 10
+          curl -sf https://chef-v-game.seekn.site/healthz || exit 1

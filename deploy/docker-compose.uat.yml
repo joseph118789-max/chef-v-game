@@ -1,0 +1,21 @@
+services:
+  frontend:
+    image: ghcr.io/seekn/chef-v-game-frontend:uat
+    container_name: chef-v-game-frontend-uat
+    restart: unless-stopped
+    ports:
+      - "8086:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.chef-v-game-uat.rule=Host(`chef-v-game-uat.seekn.site`)"
+      - "traefik.http.routers.chef-v-game-uat.entrypoints=web,websecure"
+      - "traefik.http.routers.chef-v-game-uat.tls=true"
+      - "traefik.http.routers.chef-v-game-uat.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.chef-v-game-uat.loadbalancer.server.port=80"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

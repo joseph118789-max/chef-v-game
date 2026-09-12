@@ -1,0 +1,58 @@
+# Chef V — k8s deployment
+# Image is overridden at deploy time via:
+#   kubectl -n chef-v-game set image deployment/chef-v-game \
+#     frontend=ghcr.io/<owner>/chef-v-game:<tag>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chef-v-game
+  namespace: chef-v-game
+  labels:
+    app: chef-v-game
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: chef-v-game
+  template:
+    metadata:
+      labels:
+        app: chef-v-game
+    spec:
+      imagePullSecrets:
+        - name: ghcr-io
+      containers:
+        - name: frontend
+          image: ghcr.io/seekn/chef-v-game:PLACEHOLDER
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3

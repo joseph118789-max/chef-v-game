@@ -1,0 +1,14 @@
+# Chef V — k8s service
+apiVersion: v1
+kind: Service
+metadata:
+  name: chef-v-game
+  namespace: chef-v-game
+spec:
+  type: ClusterIP
+  selector:
+    app: chef-v-game
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

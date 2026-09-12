@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'release/*']
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: seekn/chef-v-game-frontend
+
+jobs:
+  lint-and-test:
+    name: Lint · Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: TypeScript type check
+        run: npm run lint
+
+      - name: Receipt-scoring tests
+        run: npm run test:scoring
+
+      - name: Member-utils tests
+        run: npm run test:members
+
+  build:
+    name: Build & Push image
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine image tag
+        id: tag
+        run: |
+          REF="${{ github.ref }}"
+          if [[ "$REF" == "refs/heads/main" ]]; then
+            echo "tag=dev" >> $GITHUB_OUTPUT
+          elif [[ "$REF" == "refs/heads/release/"* ]]; then
+            echo "tag=uat" >> $GITHUB_OUTPUT
+          else
+            echo "tag=pr-{{ github.event.number }}" >> $GITHUB_OUTPUT
+          fi
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.tag.outputs.tag }}
+            type=sha,prefix=sha-,format=short
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./deploy/Dockerfile.frontend
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: VITE_API_URL=
+
+  deploy-dev:
+    name: Deploy → Dev
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment: dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.11
+        with:
+          host: ${{ secrets.DEV_HOST }}
+          username: ${{ secrets.DEV_USER }}
+          key: ${{ secrets.DEV_SSH_KEY }}
+          port: 22
+          script: |
+            cd ${{ secrets.DEV_DEPLOY_PATH }}
+            docker compose pull
+            docker compose up -d --remove-orphans
+            sleep 5
+            curl -sf http://localhost:8085/ || exit 1
+
+  deploy-uat:
+    name: Deploy → UAT
+    runs-on: ubuntu-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/heads/release/')
+    environment: uat
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.11
+        with:
+          host: ${{ secrets.UAT_HOST }}
+          username: ${{ secrets.UAT_USER }}
+          key: ${{ secrets.UAT_SSH_KEY }}
+          port: 22
+          script: |
+            cd ${{ secrets.UAT_DEPLOY_PATH }}
+            docker compose -f docker-compose.yml -f deploy/docker-compose.uat.yml pull
+            docker compose -f docker-compose.yml -f deploy/docker-compose.uat.yml up -d --remove-orphans
+            sleep 5
+            curl -sf http://localhost:8086/ || exit 1
