@@ -72,6 +72,7 @@ jobs:
           tags: |
             type=raw,value=${{ steps.tag.outputs.tag }}
             type=sha,prefix=sha-,format=short
+            type=raw,value=buildcache
 
       - uses: docker/build-push-action@v6
         with:
@@ -79,8 +80,9 @@ jobs:
           file: ./deploy/Dockerfile.frontend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          provenance: false
-          cache: false
+          cache-from: type=registry,ref=ghcr.io/joseph118789-max/chef-v-game-frontend:buildcache
+          cache-to: type=registry,ref=ghcr.io/joseph118789-max/chef-v-game-frontend:buildcache,mode=max
+          cache-bind: false
           build-args: VITE_API_URL=
 
   deploy-dev:
