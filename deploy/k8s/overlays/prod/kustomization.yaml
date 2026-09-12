@@ -5,6 +5,10 @@ kind: Kustomization
 namespace: chef-v-game
 resources:
   - ../../base
+images:
+  - name: ghcr.io/seekn/chef-v-game-frontend
+    newName: ghcr.io/joseph118789-max/chef-v-game-frontend
+    newTag: latest
 patches:
   - target:
       kind: Deployment
@@ -19,3 +23,5 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/resources/limits/memory
         value: 512Mi
+      - op: remove
+        path: /spec/template/spec/imagePullSecrets

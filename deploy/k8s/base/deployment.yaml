@@ -24,11 +24,9 @@ spec:
       labels:
         app: chef-v-game
     spec:
-      imagePullSecrets:
-        - name: ghcr-io
       containers:
         - name: frontend
-          image: ghcr.io/seekn/chef-v-game:PLACEHOLDER
+          image: ghcr.io/joseph118789-max/chef-v-game-frontend:latest
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
