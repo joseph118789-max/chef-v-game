@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: seekn/chef-v-game-frontend
+  IMAGE_NAME: joseph118789-max/chef-v-game-frontend
 
 jobs:
   lint-and-test:
@@ -79,8 +79,8 @@ jobs:
           file: ./deploy/Dockerfile.frontend
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          cache-to: type=gha,mode=max
-          no-cache-to: true
+          provenance: false
+          cache: false
           build-args: VITE_API_URL=
 
   deploy-dev:
