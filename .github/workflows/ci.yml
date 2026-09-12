@@ -82,7 +82,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           cache-from: type=registry,ref=ghcr.io/joseph118789-max/chef-v-game-frontend:buildcache
           cache-to: type=registry,ref=ghcr.io/joseph118789-max/chef-v-game-frontend:buildcache,mode=max
-          cache-bind: false
           build-args: VITE_API_URL=
 
   deploy-dev:
